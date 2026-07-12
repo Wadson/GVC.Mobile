@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="GVC.Mobile.Views.ProdutosPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:GVC.Mobile.Models"
+    xmlns:viewModels="clr-namespace:GVC.Mobile.ViewModels"
+    x:DataType="viewModels:ProdutosViewModel"
+    Title="Consulta de Produtos"
+    BackgroundColor="#F4F6F8">
+
+    <Grid
+        RowDefinitions="Auto,Auto,Auto,*"
+        RowSpacing="0">
+
+        <!-- CABEÇALHO -->
+        <Border
+            Grid.Row="0"
+            Padding="18,16"
+            BackgroundColor="#173B57"
+            StrokeThickness="0">
+
+            <Grid
+                ColumnDefinitions="*,Auto"
+                ColumnSpacing="12">
+
+                <VerticalStackLayout
+                    Grid.Column="0"
+                    Spacing="2">
+
+                    <Label
+                        Text="Consulta de Produtos"
+                        FontSize="23"
+                        FontAttributes="Bold"
+                        TextColor="White" />
+
+                    <Label
+                        Text="{Binding ResumoProdutos}"
+                        FontSize="12"
+                        TextColor="#D9E6EF" />
+
+                </VerticalStackLayout>
+
+                <ActivityIndicator
+                    Grid.Column="1"
+                    IsRunning="{Binding EstaCarregando}"
+                    IsVisible="{Binding EstaCarregando}"
+                    Color="White"
+                    WidthRequest="28"
+                    HeightRequest="28"
+                    VerticalOptions="Center" />
+
+            </Grid>
+
+        </Border>
+
+        <!-- PESQUISA -->
+        <Border
+            Grid.Row="1"
+            Margin="14,14,14,8"
+            Padding="4"
+            BackgroundColor="White"
+            Stroke="#D6DCE1"
+            StrokeThickness="1">
+
+            <SearchBar
+                Text="{Binding TermoPesquisa}"
+                Placeholder="Nome, referência, marca, EAN ou código"
+                FontSize="15"
+                BackgroundColor="Transparent"
+                CancelButtonColor="#173B57"
+                TextColor="#20252A"
+                PlaceholderColor="#7C858D" />
+
+        </Border>
+
+        <!-- STATUS -->
+        <Grid
+            Grid.Row="2"
+            Margin="18,0,18,8"
+            ColumnDefinitions="*,Auto">
+
+            <Label
+                Grid.Column="0"
+                Text="{Binding MensagemStatus}"
+                FontSize="12"
+                TextColor="#66717A"
+                VerticalOptions="Center" />
+
+            <Button
+                Grid.Column="1"
+                Text="Limpar"
+                Command="{Binding LimparPesquisaCommand}"
+                Padding="12,5"
+                FontSize="12"
+                BackgroundColor="Transparent"
+                TextColor="#173B57" />
+
+        </Grid>
+
+        <!-- LISTA -->
+        <CollectionView
+            x:Name="cvProdutos"
+            Grid.Row="3"
+            Margin="12,0,12,12"
+            ItemsSource="{Binding Produtos}"
+            SelectionMode="Single"
+            SelectedItem="{Binding ProdutoSelecionado}"
+            SelectionChanged="cvProdutos_SelectionChanged"
+            RemainingItemsThreshold="5">
+
+            <CollectionView.EmptyView>
+
+                <VerticalStackLayout
+                    Padding="30"
+                    Spacing="12"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center">
+
+                    <Label
+                        Text="🔎"
+                        FontSize="44"
+                        HorizontalTextAlignment="Center" />
+
+                    <Label
+                        Text="{Binding MensagemStatus}"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        TextColor="#49545C"
+                        HorizontalTextAlignment="Center" />
+
+                    <Label
+                        Text="Sincronize novamente ou altere os termos da pesquisa."
+                        FontSize="13"
+                        TextColor="#7C858D"
+                        HorizontalTextAlignment="Center" />
+
+                </VerticalStackLayout>
+
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+
+                <DataTemplate
+                    x:DataType="models:Produto">
+
+                    <Border
+                        Margin="2,5"
+                        Padding="12"
+                        BackgroundColor="White"
+                        Stroke="#DDE2E6"
+                        StrokeThickness="1">
+
+                        <Border.StrokeShape>
+
+                            <RoundRectangle
+                                CornerRadius="12" />
+
+                        </Border.StrokeShape>
+
+                        <Grid
+                            ColumnDefinitions="76,*"
+                            RowDefinitions="Auto"
+                            ColumnSpacing="13">
+
+                            <!-- IMAGEM -->
+                            <Border
+                                Grid.Column="0"
+                                WidthRequest="76"
+                                HeightRequest="76"
+                                BackgroundColor="#EEF1F3"
+                                StrokeThickness="0">
+
+                                <Border.StrokeShape>
+
+                                    <RoundRectangle
+                                        CornerRadius="9" />
+
+                                </Border.StrokeShape>
+
+                                <Image
+                                    Source="{Binding ImagemLocal}"
+                                    Aspect="AspectFit"
+                                    Margin="5" />
+
+                            </Border>
+
+                            <!-- DADOS -->
+                            <Grid
+                                Grid.Column="1"
+                                RowDefinitions="Auto,Auto,Auto,Auto"
+                                ColumnDefinitions="*,Auto"
+                                RowSpacing="4">
+
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.ColumnSpan="2"
+                                    Text="{Binding NomeProduto}"
+                                    FontSize="15"
+                                    FontAttributes="Bold"
+                                    TextColor="#20252A"
+                                    LineBreakMode="TailTruncation"
+                                    MaxLines="2" />
+
+                                <HorizontalStackLayout
+                                    Grid.Row="1"
+                                    Grid.ColumnSpan="2"
+                                    Spacing="4">
+
+                                    <Label
+                                        Text="Cód."
+                                        FontSize="11"
+                                        FontAttributes="Bold"
+                                        TextColor="#6B747B" />
+
+                                    <Label
+                                        Text="{Binding ProdutoID}"
+                                        FontSize="11"
+                                        TextColor="#6B747B" />
+
+                                    <Label
+                                        Text=" • Ref."
+                                        FontSize="11"
+                                        FontAttributes="Bold"
+                                        TextColor="#6B747B" />
+
+                                    <Label
+                                        Text="{Binding Referencia}"
+                                        FontSize="11"
+                                        TextColor="#6B747B" />
+
+                                </HorizontalStackLayout>
+
+                                <Label
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Text="{Binding Marca}"
+                                    FontSize="12"
+                                    TextColor="#4F5B64"
+                                    LineBreakMode="TailTruncation" />
+
+                                <Label
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Text="{Binding Estoque,
+                                        StringFormat='Estoque: {0:N0}'}"
+                                    FontSize="12"
+                                    FontAttributes="Bold"
+                                    TextColor="#173B57"
+                                    HorizontalTextAlignment="End" />
+
+                                <Label
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    Text="Preço de venda"
+                                    FontSize="11"
+                                    TextColor="#7C858D"
+                                    VerticalOptions="End" />
+
+                                <Label
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Text="{Binding PrecoDeVenda,
+                                        StringFormat='R$ {0:N2}'}"
+                                    FontSize="17"
+                                    FontAttributes="Bold"
+                                    TextColor="#16734A"
+                                    HorizontalTextAlignment="End" />
+
+                            </Grid>
+
+                        </Grid>
+
+                    </Border>
+
+                </DataTemplate>
+
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="GVC.Mobile.Views.TesteApiPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Teste da API">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="24"
+            Spacing="18">
+
+            <Label
+                Text="GVC Mobile"
+                FontSize="28"
+                FontAttributes="Bold"
+                HorizontalOptions="Center" />
+
+            <Label
+                Text="Teste de comunicação e download do pacote de sincronização."
+                FontSize="15"
+                HorizontalTextAlignment="Center" />
+
+            <Button
+                x:Name="btnTestarConexao"
+                Text="Testar conexão"
+                Clicked="btnTestarConexao_Clicked" />
+
+            <Button
+                x:Name="btnBaixarPacote"
+                Text="Sincronizar produtos"
+                Clicked="btnBaixarPacote_Clicked" />
+
+            <ProgressBar
+                x:Name="progressDownload"
+                Progress="0"
+                IsVisible="False" />
+
+            <Label
+                x:Name="lblPercentual"
+                Text=""
+                HorizontalTextAlignment="Center"
+                FontAttributes="Bold" />
+
+            <Border
+                Padding="16"
+                StrokeThickness="1">
+
+                <VerticalStackLayout Spacing="8">
+
+                    <Label
+                        Text="Resultado"
+                        FontAttributes="Bold" />
+
+                    <Label
+                        x:Name="lblResultado"
+                        Text="Aguardando teste..."
+                        LineBreakMode="WordWrap" />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+	<application 
+			android:allowBackup="true" 
+			android:icon="@mipmap/appicon" 
+			android:supportsRtl="true"
+			android:usesCleartextTraffic="true">	
+	</application>
+	
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.BROADCAST_SMS" />
+	<uses-permission android:name="android.permission.BROADCAST_STICKY" />
+	<uses-permission android:name="android.permission.BROADCAST_WAP_PUSH" />
+	<uses-permission android:name="android.permission.CALL_COMPANION_APP" />
+	<uses-permission android:name="android.permission.CALL_PHONE" />
+	<uses-permission android:name="android.permission.CALL_PRIVILEGED" />
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.CAPTURE_AUDIO_OUTPUT" />
+	<uses-permission android:name="android.permission.CAPTURE_SECURE_VIDEO_OUTPUT" />
+	<uses-permission android:name="android.permission.CHANGE_COMPONENT_ENABLED_STATE" />
+	<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+</manifest>

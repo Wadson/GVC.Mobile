@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="GVC.Mobile.Views.ProdutoDetalhePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:GVC.Mobile.ViewModels"
+    x:DataType="viewModels:ProdutoDetalheViewModel"
+    Title="Detalhes do Produto"
+    BackgroundColor="#F4F6F8">
+
+    <ScrollView>
+
+        <VerticalStackLayout
+            Padding="18"
+            Spacing="14">
+
+            <Border
+                Padding="15"
+                BackgroundColor="White"
+                Stroke="#DDE2E6">
+
+                <Border.StrokeShape>
+
+                    <RoundRectangle
+                        CornerRadius="14" />
+
+                </Border.StrokeShape>
+
+                <Image
+                    Source="{Binding Produto.ImagemLocal}"
+                    HeightRequest="230"
+                    Aspect="AspectFit" />
+
+            </Border>
+
+            <Label
+                Text="{Binding Produto.NomeProduto}"
+                FontSize="22"
+                FontAttributes="Bold"
+                TextColor="#20252A" />
+
+            <Grid
+                ColumnDefinitions="*,*"
+                RowDefinitions="Auto,Auto"
+                ColumnSpacing="10"
+                RowSpacing="10">
+
+                <Border
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Padding="12"
+                    BackgroundColor="White"
+                    Stroke="#DDE2E6">
+
+                    <VerticalStackLayout Spacing="3">
+
+                        <Label
+                            Text="Código"
+                            FontSize="11"
+                            TextColor="#7C858D" />
+
+                        <Label
+                            Text="{Binding Produto.ProdutoID}"
+                            FontSize="16"
+                            FontAttributes="Bold"
+                            TextColor="#20252A" />
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+                <Border
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Padding="12"
+                    BackgroundColor="White"
+                    Stroke="#DDE2E6">
+
+                    <VerticalStackLayout Spacing="3">
+
+                        <Label
+                            Text="Referência"
+                            FontSize="11"
+                            TextColor="#7C858D" />
+
+                        <Label
+                            Text="{Binding Produto.Referencia}"
+                            FontSize="16"
+                            FontAttributes="Bold"
+                            TextColor="#20252A" />
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+                <Border
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Padding="12"
+                    BackgroundColor="White"
+                    Stroke="#DDE2E6">
+
+                    <VerticalStackLayout Spacing="3">
+
+                        <Label
+                            Text="Marca"
+                            FontSize="11"
+                            TextColor="#7C858D" />
+
+                        <Label
+                            Text="{Binding Produto.Marca}"
+                            FontSize="15"
+                            FontAttributes="Bold"
+                            TextColor="#20252A" />
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+                <Border
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Padding="12"
+                    BackgroundColor="White"
+                    Stroke="#DDE2E6">
+
+                    <VerticalStackLayout Spacing="3">
+
+                        <Label
+                            Text="Estoque"
+                            FontSize="11"
+                            TextColor="#7C858D" />
+
+                        <Label
+                            Text="{Binding Produto.Estoque,
+                                StringFormat='{0:N0} unidade(s)'}"
+                            FontSize="15"
+                            FontAttributes="Bold"
+                            TextColor="#173B57" />
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+            </Grid>
+
+            <Border
+                Padding="16"
+                BackgroundColor="White"
+                Stroke="#DDE2E6">
+
+                <Border.StrokeShape>
+
+                    <RoundRectangle
+                        CornerRadius="14" />
+
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="13">
+
+                    <Label
+                        Text="Preços"
+                        FontSize="17"
+                        FontAttributes="Bold"
+                        TextColor="#20252A" />
+
+                    <Grid
+                        ColumnDefinitions="*,Auto"
+                        RowDefinitions="Auto,Auto,Auto"
+                        RowSpacing="12">
+
+                        <Label
+                            Grid.Row="0"
+                            Text="Preço de compra"
+                            TextColor="#66717A" />
+
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Text="{Binding Produto.PrecoCompra,
+                                StringFormat='R$ {0:N2}'}"
+                            FontAttributes="Bold"
+                            TextColor="#20252A" />
+
+                        <Label
+                            Grid.Row="1"
+                            Text="Preço de custo"
+                            TextColor="#66717A" />
+
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Text="{Binding Produto.PrecoCusto,
+                                StringFormat='R$ {0:N2}'}"
+                            FontAttributes="Bold"
+                            TextColor="#20252A" />
+
+                        <Label
+                            Grid.Row="2"
+                            Text="Preço de venda"
+                            FontAttributes="Bold"
+                            TextColor="#16734A" />
+
+                        <Label
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Text="{Binding Produto.PrecoDeVenda,
+                                StringFormat='R$ {0:N2}'}"
+                            FontSize="21"
+                            FontAttributes="Bold"
+                            TextColor="#16734A" />
+
+                    </Grid>
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <Border
+                Padding="14"
+                BackgroundColor="White"
+                Stroke="#DDE2E6">
+
+                <Grid
+                    ColumnDefinitions="Auto,*"
+                    ColumnSpacing="10">
+
+                    <Label
+                        Text="GTIN/EAN"
+                        FontAttributes="Bold"
+                        TextColor="#66717A" />
+
+                    <Label
+                        Grid.Column="1"
+                        Text="{Binding Produto.GtinEan}"
+                        HorizontalTextAlignment="End"
+                        TextColor="#20252A" />
+
+                </Grid>
+
+            </Border>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="GVC.Mobile.Views.ConfiguracoesPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Configurações"
+    BackgroundColor="#F4F6F8">
+
+    <ScrollView>
+
+        <VerticalStackLayout
+            Padding="18"
+            Spacing="14">
+
+            <Label
+                Text="Conexão com o servidor"
+                FontSize="22"
+                FontAttributes="Bold"
+                TextColor="#20252A" />
+
+            <Label
+                Text="Informe o computador onde a GVC Mobile API está instalada."
+                FontSize="13"
+                TextColor="#66717A" />
+
+            <Border
+                Padding="16"
+                BackgroundColor="White"
+                Stroke="#DDE2E6">
+
+                <Border.StrokeShape>
+                    <RoundRectangle
+                        CornerRadius="14" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="13">
+
+                    <Label
+                        Text="Endereço da API"
+                        FontAttributes="Bold" />
+
+                    <Entry
+                        x:Name="txtBaseUrl"
+                        Placeholder="http://10.0.0.130:5080"
+                        Keyboard="Url" />
+
+                    <Label
+                        Text="Código da empresa"
+                        FontAttributes="Bold" />
+
+                    <Entry
+                        x:Name="txtEmpresaId"
+                        Placeholder="3"
+                        Keyboard="Numeric" />
+
+                    <Label
+                        Text="Chave da API"
+                        FontAttributes="Bold" />
+
+                    <Entry
+                        x:Name="txtApiKey"
+                        Placeholder="Chave de acesso"
+                        IsPassword="True" />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <Button
+                Text="Testar conexão"
+                HeightRequest="50"
+                BackgroundColor="#173B57"
+                TextColor="White"
+                Clicked="TestarConexao_Clicked" />
+
+            <Button
+                Text="Salvar configurações"
+                HeightRequest="50"
+                BackgroundColor="#16734A"
+                TextColor="White"
+                Clicked="Salvar_Clicked" />
+
+            <Button
+                Text="Restaurar valores padrão"
+                BackgroundColor="Transparent"
+                TextColor="#9B2C2C"
+                Clicked="Restaurar_Clicked" />
+
+            <ActivityIndicator
+                x:Name="loading"
+                IsVisible="False"
+                IsRunning="False"
+                Color="#173B57" />
+
+            <Label
+                x:Name="lblResultado"
+                HorizontalTextAlignment="Center"
+                TextColor="#59656E" />
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

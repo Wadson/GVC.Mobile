@@ -16,9 +16,12 @@ androidx.fragment.app.FragmentContainerView;D:\Projetos\GVC.Mobile\obj\Debug\net
 attr;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\169\jl\res\values\attr.xml
 background;obj\Debug\net10.0-android\resizetizer\r\mipmap-anydpi-v26\appicon.xml
 background;obj\Debug\net10.0-android\resizetizer\r\mipmap-anydpi-v26\appicon_round.xml
+bitmap;obj\Debug\net10.0-android\resizetizer\sp\drawable\maui_splash_image.xml
+bitmap;obj\Debug\net10.0-android\resizetizer\sp\drawable-v31\maui_splash_image.xml
 cache-path;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\170\jl\res\xml\microsoft_maui_essentials_fileprovider_file_paths.xml
 color;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\169\jl\res\values\colors.xml
 color;obj\Debug\net10.0-android\res\values\colors.xml
+color;obj\Debug\net10.0-android\resizetizer\sp\values\maui_colors.xml
 com.google.android.material.appbar.AppBarLayout;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\167\jl\res\layout\flyoutcontent.xml
 com.google.android.material.appbar.AppBarLayout;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\167\jl\res\layout\shellcontent.xml
 com.google.android.material.appbar.AppBarLayout;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\169\jl\res\layout\navigationlayout.xml
@@ -32,8 +35,12 @@ item;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\169\jl\res\drawable\mau
 item;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\169\jl\res\values\styles.xml
 item;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\169\jl\res\values\styles-material3.xml
 item;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\174\jl\res\values\values.xml
+item;obj\Debug\net10.0-android\resizetizer\sp\drawable\maui_splash_image.xml
+item;obj\Debug\net10.0-android\resizetizer\sp\drawable-v31\maui_splash_image.xml
 layer-list;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\169\jl\res\drawable\maui_splash.xml
 layer-list;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\169\jl\res\drawable\maui_splash_image.xml
+layer-list;obj\Debug\net10.0-android\resizetizer\sp\drawable\maui_splash_image.xml
+layer-list;obj\Debug\net10.0-android\resizetizer\sp\drawable-v31\maui_splash_image.xml
 microsoft.maui.controls.platform.compatibility.ShellFlyoutLayout;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\167\jl\res\layout\flyoutcontent.xml
 monochrome;obj\Debug\net10.0-android\resizetizer\r\mipmap-anydpi-v26\appicon.xml
 monochrome;obj\Debug\net10.0-android\resizetizer\r\mipmap-anydpi-v26\appicon_round.xml
@@ -46,6 +53,7 @@ resources;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\169\jl\res\values\
 resources;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\169\jl\res\values\styles-material3.xml
 resources;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\174\jl\res\values\values.xml
 resources;obj\Debug\net10.0-android\res\values\colors.xml
+resources;obj\Debug\net10.0-android\resizetizer\sp\values\maui_colors.xml
 set;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\167\jl\res\anim\enterfromleft.xml
 set;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\167\jl\res\anim\enterfromright.xml
 set;D:\Projetos\GVC.Mobile\obj\Debug\net10.0-android\lp\167\jl\res\anim\exittoleft.xml

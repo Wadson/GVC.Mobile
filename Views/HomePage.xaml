@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="GVC.Mobile.Views.HomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:GVC.Mobile.ViewModels"
+    x:DataType="viewModels:HomeViewModel"
+    Title="GVC Mobile"
+    BackgroundColor="#F4F6F8">
+
+    <ScrollView>
+
+        <VerticalStackLayout
+            Padding="18"
+            Spacing="16">
+
+            <Border
+                Padding="20"
+                BackgroundColor="#173B57"
+                StrokeThickness="0">
+
+                <Border.StrokeShape>
+                    <RoundRectangle
+                        CornerRadius="16" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="5">
+
+                    <Label
+                        Text="GVC Mobile"
+                        FontSize="27"
+                        FontAttributes="Bold"
+                        TextColor="White" />
+
+                    <Label
+                        Text="Consulta de preços e estoque"
+                        FontSize="14"
+                        TextColor="#D9E6EF" />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <Grid
+                ColumnDefinitions="*,*"
+                ColumnSpacing="12">
+
+                <Border
+                    Grid.Column="0"
+                    Padding="15"
+                    BackgroundColor="White"
+                    Stroke="#DDE2E6">
+
+                    <Border.StrokeShape>
+                        <RoundRectangle
+                            CornerRadius="13" />
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="4">
+
+                        <Label
+                            Text="Produtos"
+                            FontSize="12"
+                            TextColor="#6B747B" />
+
+                        <Label
+                            Text="{Binding QuantidadeProdutos,
+                                StringFormat='{0:N0}'}"
+                            FontSize="25"
+                            FontAttributes="Bold"
+                            TextColor="#173B57" />
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+                <Border
+                    Grid.Column="1"
+                    Padding="15"
+                    BackgroundColor="White"
+                    Stroke="#DDE2E6">
+
+                    <Border.StrokeShape>
+                        <RoundRectangle
+                            CornerRadius="13" />
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout Spacing="4">
+
+                        <Label
+                            Text="Imagens"
+                            FontSize="12"
+                            TextColor="#6B747B" />
+
+                        <Label
+                            Text="{Binding QuantidadeImagens,
+                                StringFormat='{0:N0}'}"
+                            FontSize="25"
+                            FontAttributes="Bold"
+                            TextColor="#173B57" />
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+            </Grid>
+
+            <Border
+                Padding="16"
+                BackgroundColor="White"
+                Stroke="#DDE2E6">
+
+                <Border.StrokeShape>
+                    <RoundRectangle
+                        CornerRadius="13" />
+                </Border.StrokeShape>
+
+                <Grid
+                    RowDefinitions="Auto,Auto"
+                    ColumnDefinitions="*,Auto"
+                    RowSpacing="8">
+
+                    <Label
+                        Text="Última sincronização"
+                        FontSize="12"
+                        TextColor="#6B747B" />
+
+                    <Label
+                        Grid.Column="1"
+                        Text="{Binding UltimaSincronizacao}"
+                        FontAttributes="Bold"
+                        TextColor="#20252A" />
+
+                    <Label
+                        Grid.Row="1"
+                        Text="Versão dos dados"
+                        FontSize="12"
+                        TextColor="#6B747B" />
+
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Text="{Binding VersaoSincronizacao}"
+                        TextColor="#20252A" />
+
+                </Grid>
+
+            </Border>
+
+            <Button
+                Text="Consultar produtos"
+                HeightRequest="54"
+                FontSize="16"
+                FontAttributes="Bold"
+                BackgroundColor="#173B57"
+                TextColor="White"
+                Clicked="ConsultarProdutos_Clicked" />
+
+            <Button
+                Text="Sincronizar produtos"
+                HeightRequest="54"
+                FontSize="16"
+                FontAttributes="Bold"
+                BackgroundColor="#16734A"
+                TextColor="White"
+                IsEnabled="{Binding PodeSincronizar}"
+                Clicked="Sincronizar_Clicked" />
+
+            <Button
+                Text="Configurações"
+                HeightRequest="48"
+                BackgroundColor="White"
+                TextColor="#173B57"
+                BorderColor="#173B57"
+                BorderWidth="1"
+                Clicked="Configuracoes_Clicked" />
+
+            <Button
+                Text="Sobre"
+                HeightRequest="46"
+                BackgroundColor="Transparent"
+                TextColor="#59656E"
+                Clicked="Sobre_Clicked" />
+
+            <VerticalStackLayout
+                Spacing="7"
+                IsVisible="{Binding EstaSincronizando}">
+
+                <ProgressBar
+                    Progress="{Binding Progresso}"
+                    ProgressColor="#16734A" />
+
+                <Label
+                    Text="{Binding Percentual}"
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center" />
+
+            </VerticalStackLayout>
+
+            <Label
+                Text="{Binding MensagemSincronizacao}"
+                FontSize="13"
+                TextColor="#59656E"
+                HorizontalTextAlignment="Center" />
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

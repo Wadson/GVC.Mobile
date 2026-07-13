@@ -6,23 +6,23 @@ namespace GVC.Mobile;
 public partial class App : Application
 {
     private readonly DatabaseService _databaseService;
-    private readonly ProdutosPage _produtosPage;
+    private readonly HomePage _homePage;
 
     public App(
         DatabaseService databaseService,
-        ProdutosPage produtosPage)
+        HomePage homePage)
     {
         InitializeComponent();
 
         _databaseService = databaseService;
-        _produtosPage = produtosPage;
+        _homePage = homePage;
     }
 
     protected override Window CreateWindow(
         IActivationState? activationState)
     {
         var navigationPage =
-            new NavigationPage(_produtosPage)
+            new NavigationPage(_homePage)
             {
                 BarBackgroundColor =
                     Color.FromArgb("#173B57"),

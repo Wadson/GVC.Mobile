@@ -4,6 +4,38 @@
         <name>GVC.Mobile</name>
     </assembly>
     <members>
+        <member name="T:GVC.Mobile.ViewModels.HomeViewModel">
+            <inheritdoc/>
+        </member>
+        <member name="P:GVC.Mobile.ViewModels.HomeViewModel.EstaSincronizando">
+            <inheritdoc cref="F:GVC.Mobile.ViewModels.HomeViewModel._estaSincronizando"/>
+        </member>
+        <member name="P:GVC.Mobile.ViewModels.HomeViewModel.Progresso">
+            <inheritdoc cref="F:GVC.Mobile.ViewModels.HomeViewModel._progresso"/>
+        </member>
+        <member name="P:GVC.Mobile.ViewModels.HomeViewModel.Percentual">
+            <inheritdoc cref="F:GVC.Mobile.ViewModels.HomeViewModel._percentual"/>
+        </member>
+        <member name="P:GVC.Mobile.ViewModels.HomeViewModel.MensagemSincronizacao">
+            <inheritdoc cref="F:GVC.Mobile.ViewModels.HomeViewModel._mensagemSincronizacao"/>
+        </member>
+        <member name="P:GVC.Mobile.ViewModels.HomeViewModel.UltimaSincronizacao">
+            <inheritdoc cref="F:GVC.Mobile.ViewModels.HomeViewModel._ultimaSincronizacao"/>
+        </member>
+        <member name="P:GVC.Mobile.ViewModels.HomeViewModel.VersaoSincronizacao">
+            <inheritdoc cref="F:GVC.Mobile.ViewModels.HomeViewModel._versaoSincronizacao"/>
+        </member>
+        <member name="P:GVC.Mobile.ViewModels.HomeViewModel.QuantidadeProdutos">
+            <inheritdoc cref="F:GVC.Mobile.ViewModels.HomeViewModel._quantidadeProdutos"/>
+        </member>
+        <member name="P:GVC.Mobile.ViewModels.HomeViewModel.QuantidadeImagens">
+            <inheritdoc cref="F:GVC.Mobile.ViewModels.HomeViewModel._quantidadeImagens"/>
+        </member>
+        <member name="M:GVC.Mobile.ViewModels.HomeViewModel.OnEstaSincronizandoChanged(System.Boolean)">
+            <summary>Executes the logic for when <see cref="P:GVC.Mobile.ViewModels.HomeViewModel.EstaSincronizando"/> just changed.</summary>
+            <param name="value">The new property value that was set.</param>
+            <remarks>This method is invoked right after the value of <see cref="P:GVC.Mobile.ViewModels.HomeViewModel.EstaSincronizando"/> is changed.</remarks>
+        </member>
         <member name="T:GVC.Mobile.ViewModels.ProdutoDetalheViewModel">
             <inheritdoc/>
         </member>
@@ -182,6 +214,30 @@
             for all properties generated with <see cref="T:CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute"/>.
             </summary>
         </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.EstaSincronizando">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "EstaSincronizando" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Progresso">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Progresso" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Percentual">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Percentual" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.MensagemSincronizacao">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "MensagemSincronizacao" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.UltimaSincronizacao">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "UltimaSincronizacao" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.VersaoSincronizacao">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "VersaoSincronizacao" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.QuantidadeProdutos">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "QuantidadeProdutos" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.QuantidadeImagens">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "QuantidadeImagens" generated properties.</summary>
+        </member>
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Produto">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Produto" generated properties.</summary>
         </member>
@@ -208,6 +264,30 @@
             A helper type providing cached, reusable <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instances
             for all properties generated with <see cref="T:CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute"/>.
             </summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.EstaSincronizando">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "EstaSincronizando" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Progresso">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Progresso" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Percentual">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Percentual" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.MensagemSincronizacao">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "MensagemSincronizacao" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.UltimaSincronizacao">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "UltimaSincronizacao" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.VersaoSincronizacao">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "VersaoSincronizacao" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.QuantidadeProdutos">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "QuantidadeProdutos" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.QuantidadeImagens">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "QuantidadeImagens" generated properties.</summary>
         </member>
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Produto">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Produto" generated properties.</summary>

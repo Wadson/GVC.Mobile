@@ -9,16 +9,16 @@ namespace GVC.Mobile.Services;
 public sealed class ApiService : IApiService
 {
     private readonly HttpClient _httpClient;
-    private readonly ApiSettings _settings;
+    private readonly IAppSettingsService _settingsService;
     private readonly ILogger<ApiService> _logger;
 
     public ApiService(
         HttpClient httpClient,
-        ApiSettings settings,
+        IAppSettingsService settingsService,
         ILogger<ApiService> logger)
     {
         _httpClient = httpClient;
-        _settings = settings;
+        _settingsService = settingsService;
         _logger = logger;
     }
 
@@ -27,10 +27,19 @@ public sealed class ApiService : IApiService
     {
         try
         {
-            using var response = await _httpClient.GetAsync(
+            var settings = _settingsService.Obter();
+
+            using var request = CriarRequest(
+                HttpMethod.Get,
+                settings,
                 "health",
-                HttpCompletionOption.ResponseHeadersRead,
-                cancellationToken);
+                incluirApiKey: false);
+
+            using var response =
+                await _httpClient.SendAsync(
+                    request,
+                    HttpCompletionOption.ResponseHeadersRead,
+                    cancellationToken);
 
             return response.IsSuccessStatusCode;
         }
@@ -44,10 +53,13 @@ public sealed class ApiService : IApiService
         }
     }
 
-    public async Task<DownloadPacoteResult> BaixarPacoteCompletoAsync(
-        IProgress<double>? progresso = null,
-        CancellationToken cancellationToken = default)
+    public async Task<DownloadPacoteResult>
+        BaixarPacoteCompletoAsync(
+            IProgress<double>? progresso = null,
+            CancellationToken cancellationToken = default)
     {
+        var settings = _settingsService.Obter();
+
         var nomeArquivoLocal =
             $"GVC_SYNC_{DateTime.Now:yyyyMMdd_HHmmss}.zip";
 
@@ -58,27 +70,30 @@ public sealed class ApiService : IApiService
         try
         {
             var endpoint =
-                $"api/sincronizacao/completa?empresaId={_settings.EmpresaID}";
+                $"api/sincronizacao/completa" +
+                $"?empresaId={settings.EmpresaID}";
 
-            _logger.LogInformation(
-                "Iniciando download do pacote de sincronização. Endpoint: {Endpoint}",
-                endpoint);
-
-            using var response = await _httpClient.GetAsync(
+            using var request = CriarRequest(
+                HttpMethod.Get,
+                settings,
                 endpoint,
-                HttpCompletionOption.ResponseHeadersRead,
-                cancellationToken);
+                incluirApiKey: true);
+
+            request.Headers.TryAddWithoutValidation(
+                "Accept",
+                "application/zip, application/json");
+
+            using var response =
+                await _httpClient.SendAsync(
+                    request,
+                    HttpCompletionOption.ResponseHeadersRead,
+                    cancellationToken);
 
             if (!response.IsSuccessStatusCode)
             {
                 var conteudoErro =
                     await response.Content.ReadAsStringAsync(
                         cancellationToken);
-
-                _logger.LogWarning(
-                    "Falha ao baixar o pacote. Status: {StatusCode}. Resposta: {Resposta}",
-                    response.StatusCode,
-                    conteudoErro);
 
                 return new DownloadPacoteResult
                 {
@@ -92,11 +107,11 @@ public sealed class ApiService : IApiService
             var tamanhoTotal =
                 response.Content.Headers.ContentLength;
 
-            await using var streamOrigem =
+            await using var origem =
                 await response.Content.ReadAsStreamAsync(
                     cancellationToken);
 
-            await using var streamDestino = new FileStream(
+            await using var destino = new FileStream(
                 caminhoArquivoLocal,
                 FileMode.Create,
                 FileAccess.Write,
@@ -110,99 +125,126 @@ public sealed class ApiService : IApiService
             while (true)
             {
                 var quantidadeLida =
-                    await streamOrigem.ReadAsync(
-                        buffer.AsMemory(0, buffer.Length),
+                    await origem.ReadAsync(
+                        buffer.AsMemory(
+                            0,
+                            buffer.Length),
                         cancellationToken);
 
                 if (quantidadeLida == 0)
                     break;
 
-                await streamDestino.WriteAsync(
-                    buffer.AsMemory(0, quantidadeLida),
+                await destino.WriteAsync(
+                    buffer.AsMemory(
+                        0,
+                        quantidadeLida),
                     cancellationToken);
 
                 totalBaixado += quantidadeLida;
 
-                if (tamanhoTotal.HasValue &&
-                    tamanhoTotal.Value > 0)
+                if (tamanhoTotal is > 0)
                 {
-                    var percentual =
+                    progresso?.Report(
                         (double)totalBaixado /
-                        tamanhoTotal.Value;
-
-                    progresso?.Report(percentual);
+                        tamanhoTotal.Value);
                 }
             }
 
-            await streamDestino.FlushAsync(
+            await destino.FlushAsync(
                 cancellationToken);
 
             progresso?.Report(1);
 
-            var arquivoInfo = new FileInfo(
+            var arquivo = new FileInfo(
                 caminhoArquivoLocal);
 
-            if (!arquivoInfo.Exists ||
-                arquivoInfo.Length == 0)
+            if (!arquivo.Exists ||
+                arquivo.Length == 0)
             {
                 throw new InvalidOperationException(
-                    "O pacote foi baixado, mas o arquivo está vazio.");
+                    "O pacote baixado está vazio.");
             }
-
-            _logger.LogInformation(
-                "Pacote baixado com sucesso. Caminho: {Caminho}. Tamanho: {TamanhoBytes} bytes.",
-                caminhoArquivoLocal,
-                arquivoInfo.Length);
 
             return new DownloadPacoteResult
             {
                 Sucesso = true,
                 CaminhoArquivo = caminhoArquivoLocal,
                 NomeArquivo = nomeArquivoLocal,
-                TamanhoBytes = arquivoInfo.Length
+                TamanhoBytes = arquivo.Length
             };
         }
         catch (OperationCanceledException)
         {
-            ExcluirArquivoParcial(caminhoArquivoLocal);
+            ExcluirArquivoParcial(
+                caminhoArquivoLocal);
 
             return new DownloadPacoteResult
             {
                 Sucesso = false,
                 MensagemErro =
-                    "O download da sincronização foi cancelado."
+                    "A sincronização foi cancelada."
             };
         }
         catch (HttpRequestException ex)
         {
-            ExcluirArquivoParcial(caminhoArquivoLocal);
+            ExcluirArquivoParcial(
+                caminhoArquivoLocal);
 
             _logger.LogError(
                 ex,
-                "Erro de comunicação com a API.");
+                "Falha de comunicação com a API.");
 
             return new DownloadPacoteResult
             {
                 Sucesso = false,
                 MensagemErro =
-                    "Não foi possível conectar à API. Verifique a rede, o endereço do servidor e se a API está em execução."
+                    "Não foi possível conectar à API. " +
+                    "Verifique o endereço, a rede e o servidor."
             };
         }
         catch (Exception ex)
         {
-            ExcluirArquivoParcial(caminhoArquivoLocal);
+            ExcluirArquivoParcial(
+                caminhoArquivoLocal);
 
             _logger.LogError(
                 ex,
-                "Erro ao baixar o pacote de sincronização.");
+                "Erro durante o download do pacote.");
 
             return new DownloadPacoteResult
             {
                 Sucesso = false,
                 MensagemErro =
-                    $"Não foi possível baixar o pacote: {ex.Message}"
+                    $"Não foi possível baixar o pacote: " +
+                    $"{ex.Message}"
             };
         }
+    }
+
+    private static HttpRequestMessage CriarRequest(
+        HttpMethod method,
+        ApiSettings settings,
+        string endpoint,
+        bool incluirApiKey)
+    {
+        var baseUrl =
+            settings.BaseUrl.TrimEnd('/');
+
+        var caminho =
+            endpoint.TrimStart('/');
+
+        var request = new HttpRequestMessage(
+            method,
+            $"{baseUrl}/{caminho}");
+
+        if (incluirApiKey)
+        {
+            request.Headers.TryAddWithoutValidation(
+                settings.ApiKeyHeaderName,
+                settings.ApiKey);
+        }
+
+        return request;
     }
 
     private static string CriarMensagemErro(
@@ -218,17 +260,20 @@ public sealed class ApiService : IApiService
                 "O acesso ao recurso foi negado.",
 
             HttpStatusCode.NotFound =>
-                "O endpoint de sincronização não foi encontrado.",
+                "O endpoint não foi encontrado.",
 
             HttpStatusCode.TooManyRequests =>
-                "O limite de sincronizações foi atingido. Aguarde antes de tentar novamente.",
+                "O limite de sincronizações foi atingido. " +
+                "Aguarde antes de tentar novamente.",
 
             HttpStatusCode.ServiceUnavailable =>
-                "A API ou o banco de dados está temporariamente indisponível.",
+                "A API ou o banco está indisponível.",
 
             _ =>
-                string.IsNullOrWhiteSpace(conteudoResposta)
-                    ? $"A API retornou o código {(int)statusCode}."
+                string.IsNullOrWhiteSpace(
+                    conteudoResposta)
+                    ? $"A API retornou o código " +
+                      $"{(int)statusCode}."
                     : conteudoResposta
         };
     }

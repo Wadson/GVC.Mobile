@@ -1,13 +1,12 @@
 ﻿using CommunityToolkit.Maui;
-using GVC.Mobile.Configuration;
 using GVC.Mobile.Data;
-using Microsoft.Extensions.Logging;
-using GVC.Mobile.Services;
-using GVC.Mobile.Services.Interfaces;
-using GVC.Mobile.Views;
 using GVC.Mobile.Repositories;
 using GVC.Mobile.Repositories.Interfaces;
+using GVC.Mobile.Services;
+using GVC.Mobile.Services.Interfaces;
 using GVC.Mobile.ViewModels;
+using GVC.Mobile.Views;
+using Microsoft.Extensions.Logging;
 
 namespace GVC.Mobile;
 
@@ -31,38 +30,63 @@ public static class MauiProgram
                     "OpenSansSemibold");
             });
 
-        builder.Services.AddSingleton(new ApiSettings
-        {
-            BaseUrl = "http://10.0.0.130:5080",
-            ApiKey = "123456",
-            ApiKeyHeaderName = "X-GVC-API-Key",
-            EmpresaID = 3,
-            Timeout = TimeSpan.FromMinutes(10)
-        });
-
-        builder.Services.AddTransient<ProdutosViewModel>();
-        builder.Services.AddTransient<ProdutosPage>();
-        builder.Services.AddTransient<ProdutoDetalheViewModel>();
-        builder.Services.AddTransient<ProdutoDetalhePage>();
-
+        // -------------------------------------------------
+        // SERVIÇOS PRINCIPAIS
+        // -------------------------------------------------
 
         builder.Services.AddSingleton<DatabaseService>();
-        builder.Services.AddSingleton<IProdutoRepository, ProdutoRepository>();
-        builder.Services.AddSingleton< ISincronizacaoService, SincronizacaoService>();
-        builder.Services.AddHttpClient< IApiService, ApiService>( (serviceProvider, httpClient) =>
+
+        builder.Services.AddSingleton<
+            IAppSettingsService,
+            AppSettingsService>();
+
+        builder.Services.AddSingleton<
+            IProdutoRepository,
+            ProdutoRepository>();
+
+        builder.Services.AddSingleton<
+            ISincronizacaoService,
+            SincronizacaoService>();
+
+        // -------------------------------------------------
+        // HTTP / API
+        // -------------------------------------------------
+
+        builder.Services.AddHttpClient<
+            IApiService,
+            ApiService>(
+            httpClient =>
             {
-                var settings = serviceProvider.GetRequiredService<ApiSettings>();
+                httpClient.Timeout =
+                    TimeSpan.FromMinutes(10);
+            });
 
-                var baseUrl = settings.BaseUrl.TrimEnd('/') + "/";
+        // -------------------------------------------------
+        // VIEWMODELS
+        // -------------------------------------------------
 
-                httpClient.BaseAddress =new Uri(baseUrl);
+        builder.Services.AddTransient<HomeViewModel>();
 
-                httpClient.Timeout = settings.Timeout;
+        builder.Services.AddTransient<ProdutosViewModel>();
 
-                httpClient.DefaultRequestHeaders.Add( settings.ApiKeyHeaderName, settings.ApiKey);
+        builder.Services.AddTransient<
+            ProdutoDetalheViewModel>();
 
-                httpClient.DefaultRequestHeaders.Add( "Accept", "application/zip, application/json");
-            });        
+        // -------------------------------------------------
+        // PÁGINAS
+        // -------------------------------------------------
+
+        builder.Services.AddTransient<HomePage>();
+
+        builder.Services.AddTransient<ProdutosPage>();
+
+        builder.Services.AddTransient<
+            ProdutoDetalhePage>();
+
+        builder.Services.AddTransient<
+            ConfiguracoesPage>();
+
+        builder.Services.AddTransient<SobrePage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

@@ -18,7 +18,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GVC.Mobile")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+1adf24ebdbd2b315cc8ba7d920ca6c00c662d712")]
 [assembly: System.Reflection.AssemblyProductAttribute("GVC.Mobile")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GVC.Mobile")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

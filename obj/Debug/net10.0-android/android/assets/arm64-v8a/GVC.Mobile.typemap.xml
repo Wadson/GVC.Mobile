@@ -1,4 +1,4 @@
-<api type="debug" assembly-name="GVC.Mobile" mvid="c241fcb230f94624b1bfdc175e19b9ae">
+<api type="debug" assembly-name="GVC.Mobile" mvid="3084357ebb474ea88c0e4e2f53b191e6">
   <java-to-managed>
     <entry java-name="crc6471ff18b13e89a79e/MainActivity" managed-name="GVC.Mobile.MainActivity, GVC.Mobile" managed-type-token-id="33554454" />
     <entry java-name="crc6471ff18b13e89a79e/MainApplication" managed-name="GVC.Mobile.MainApplication, GVC.Mobile" managed-type-token-id="33554455" />

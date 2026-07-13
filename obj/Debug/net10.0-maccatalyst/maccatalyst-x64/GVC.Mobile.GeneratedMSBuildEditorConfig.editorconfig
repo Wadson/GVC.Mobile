@@ -84,6 +84,26 @@ build_metadata.AdditionalFiles.NoWarn =
 build_metadata.AdditionalFiles.EnableDiagnostics = 
 build_metadata.AdditionalFiles.LineInfo = 
 
+[D:/Projetos/GVC.Mobile/Views/ConfiguracoesPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GVC.Mobile.Views.ConfiguracoesPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\ConfiguracoesPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\ConfiguracoesPage.xaml
+build_metadata.AdditionalFiles.Inflator = SourceGen
+build_metadata.AdditionalFiles.NoWarn = 
+build_metadata.AdditionalFiles.EnableDiagnostics = 
+build_metadata.AdditionalFiles.LineInfo = 
+
+[D:/Projetos/GVC.Mobile/Views/HomePage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GVC.Mobile.Views.HomePage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\HomePage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\HomePage.xaml
+build_metadata.AdditionalFiles.Inflator = SourceGen
+build_metadata.AdditionalFiles.NoWarn = 
+build_metadata.AdditionalFiles.EnableDiagnostics = 
+build_metadata.AdditionalFiles.LineInfo = 
+
 [D:/Projetos/GVC.Mobile/Views/ProdutoDetalhePage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = GVC.Mobile.Views.ProdutoDetalhePage.xaml
@@ -99,6 +119,16 @@ build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = GVC.Mobile.Views.ProdutosPage.xaml
 build_metadata.AdditionalFiles.TargetPath = Views\ProdutosPage.xaml
 build_metadata.AdditionalFiles.RelativePath = Views\ProdutosPage.xaml
+build_metadata.AdditionalFiles.Inflator = SourceGen
+build_metadata.AdditionalFiles.NoWarn = 
+build_metadata.AdditionalFiles.EnableDiagnostics = 
+build_metadata.AdditionalFiles.LineInfo = 
+
+[D:/Projetos/GVC.Mobile/Views/SobrePage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GVC.Mobile.Views.SobrePage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\SobrePage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\SobrePage.xaml
 build_metadata.AdditionalFiles.Inflator = SourceGen
 build_metadata.AdditionalFiles.NoWarn = 
 build_metadata.AdditionalFiles.EnableDiagnostics = 

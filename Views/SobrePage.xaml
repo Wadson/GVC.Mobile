@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="GVC.Mobile.Views.SobrePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Sobre"
+    BackgroundColor="#F4F6F8">
+
+    <VerticalStackLayout
+        Padding="24"
+        Spacing="14"
+        VerticalOptions="Center">
+
+        <Label
+            Text="GVC Mobile"
+            FontSize="30"
+            FontAttributes="Bold"
+            TextColor="#173B57"
+            HorizontalTextAlignment="Center" />
+
+        <Label
+            Text="GVC Consulta offline de produtos, preços e estoque."
+            FontSize="15"
+            TextColor="#59656E"
+            HorizontalTextAlignment="Center" />
+
+        <Border
+            Margin="0,15,0,0"
+            Padding="18"
+            BackgroundColor="White"
+            Stroke="#DDE2E6">
+
+            <Border.StrokeShape>
+                <RoundRectangle
+                    CornerRadius="14" />
+            </Border.StrokeShape>
+
+            <Grid
+                RowDefinitions="Auto,Auto,Auto"
+                ColumnDefinitions="*,Auto"
+                RowSpacing="13">
+
+                <Label Text="Versão do aplicativo" />
+
+                <Label
+                    Grid.Column="1"
+                    x:Name="lblVersao"
+                    FontAttributes="Bold" />
+
+                <Label
+                    Grid.Row="1"
+                    Text="Pacote" />
+
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Text="Android / iOS"
+                    FontAttributes="Bold" />
+
+                <Label
+                    Grid.Row="2"
+                    Text="Sistema" />
+
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Text="GVC"
+                    FontAttributes="Bold" />
+
+            </Grid>
+
+        </Border>
+
+        <Label
+            Text="© Sistema GVC Mobile App"
+            Margin="0,20,0,0"
+            FontSize="12"
+            TextColor="#7C858D"
+            HorizontalTextAlignment="Center" />
+
+    </VerticalStackLayout>
+
+</ContentPage>

@@ -45,14 +45,22 @@
                         Placeholder="http://10.0.0.130:5080"
                         Keyboard="Url" />
 
+
                     <Label
-                        Text="Código da empresa"
+                        Text="Empresa para consulta"
                         FontAttributes="Bold" />
 
-                    <Entry
-                        x:Name="txtEmpresaId"
-                        Placeholder="3"
-                        Keyboard="Numeric" />
+                                        <Picker
+                        x:Name="pckEmpresa"
+                        Title="Selecione uma empresa"
+                        ItemDisplayBinding="{Binding NomeExibicao}"
+                        TextColor="#20252A"
+                        TitleColor="#7C858D" />
+
+                                        <Label
+                        Text="A troca de empresa altera somente os filtros locais. Não é necessário sincronizar novamente."
+                        FontSize="11"
+                        TextColor="#66717A" />
 
                     <Label
                         Text="Chave da API"

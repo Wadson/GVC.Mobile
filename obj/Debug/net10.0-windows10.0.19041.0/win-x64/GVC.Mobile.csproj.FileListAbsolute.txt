@@ -561,3 +561,6 @@ D:\Projetos\GVC.Mobile\obj\Debug\net10.0-windows10.0.19041.0\win-x64\pri.resfile
 D:\Projetos\GVC.Mobile\obj\Debug\net10.0-windows10.0.19041.0\win-x64\qualifiers.txt
 D:\Projetos\GVC.Mobile\obj\Debug\net10.0-windows10.0.19041.0\win-x64\qualifiers.txt.intermediate
 D:\Projetos\GVC.Mobile\obj\Debug\net10.0-windows10.0.19041.0\win-x64\MultipleQualifiersPerDimensionFound.txt
+D:\Projetos\GVC.Mobile\bin\Debug\net10.0-windows10.0.19041.0\win-x64\SkiaSharp.dll
+D:\Projetos\GVC.Mobile\bin\Debug\net10.0-windows10.0.19041.0\win-x64\libSkiaSharp.dll
+D:\Projetos\GVC.Mobile\bin\Debug\net10.0-windows10.0.19041.0\win-x64\libSkiaSharp.pdb

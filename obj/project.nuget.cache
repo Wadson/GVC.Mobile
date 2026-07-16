@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "nDq8HFyCx2c=",
+  "dgSpecHash": "ijJRnVxbOXQ=",
   "success": true,
   "projectFilePath": "D:\\Projetos\\GVC.Mobile\\GVC.Mobile.csproj",
   "expectedPackageFiles": [
@@ -49,6 +49,11 @@
     "C:\\Users\\iConnect\\.nuget\\packages\\microsoft.windowsappsdk.runtime\\1.8.260101001\\microsoft.windowsappsdk.runtime.1.8.260101001.nupkg.sha512",
     "C:\\Users\\iConnect\\.nuget\\packages\\microsoft.windowsappsdk.widgets\\1.8.251231004\\microsoft.windowsappsdk.widgets.1.8.251231004.nupkg.sha512",
     "C:\\Users\\iConnect\\.nuget\\packages\\microsoft.windowsappsdk.winui\\1.8.251222000\\microsoft.windowsappsdk.winui.1.8.251222000.nupkg.sha512",
+    "C:\\Users\\iConnect\\.nuget\\packages\\skiasharp\\4.151.0-preview.2.1\\skiasharp.4.151.0-preview.2.1.nupkg.sha512",
+    "C:\\Users\\iConnect\\.nuget\\packages\\skiasharp.nativeassets.android\\4.151.0-preview.2.1\\skiasharp.nativeassets.android.4.151.0-preview.2.1.nupkg.sha512",
+    "C:\\Users\\iConnect\\.nuget\\packages\\skiasharp.nativeassets.ios\\4.151.0-preview.2.1\\skiasharp.nativeassets.ios.4.151.0-preview.2.1.nupkg.sha512",
+    "C:\\Users\\iConnect\\.nuget\\packages\\skiasharp.nativeassets.maccatalyst\\4.151.0-preview.2.1\\skiasharp.nativeassets.maccatalyst.4.151.0-preview.2.1.nupkg.sha512",
+    "C:\\Users\\iConnect\\.nuget\\packages\\skiasharp.nativeassets.win32\\4.151.0-preview.2.1\\skiasharp.nativeassets.win32.4.151.0-preview.2.1.nupkg.sha512",
     "C:\\Users\\iConnect\\.nuget\\packages\\sourcegear.sqlite3\\3.53.3\\sourcegear.sqlite3.3.53.3.nupkg.sha512",
     "C:\\Users\\iConnect\\.nuget\\packages\\sqlite-net-pcl\\1.11.284-beta\\sqlite-net-pcl.1.11.284-beta.nupkg.sha512",
     "C:\\Users\\iConnect\\.nuget\\packages\\sqlitepclraw.core\\3.0.3\\sqlitepclraw.core.3.0.3.nupkg.sha512",
@@ -159,6 +164,10 @@
     "C:\\Users\\iConnect\\.nuget\\packages\\microsoft.netcore.app.ref\\10.0.8\\microsoft.netcore.app.ref.10.0.8.nupkg.sha512",
     "C:\\Users\\iConnect\\.nuget\\packages\\microsoft.netcore.app.ref\\10.0.8\\microsoft.netcore.app.ref.10.0.8.nupkg.sha512",
     "C:\\Users\\iConnect\\.nuget\\packages\\microsoft.netcore.app.ref\\10.0.8\\microsoft.netcore.app.ref.10.0.8.nupkg.sha512",
+    "C:\\Users\\iConnect\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\10.0.9\\microsoft.netcore.app.runtime.win-x64.10.0.9.nupkg.sha512",
+    "C:\\Users\\iConnect\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\10.0.9\\microsoft.windowsdesktop.app.runtime.win-x64.10.0.9.nupkg.sha512",
+    "C:\\Users\\iConnect\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\10.0.9\\microsoft.aspnetcore.app.runtime.win-x64.10.0.9.nupkg.sha512",
+    "C:\\Users\\iConnect\\.nuget\\packages\\microsoft.netcore.app.crossgen2.win-x64\\10.0.9\\microsoft.netcore.app.crossgen2.win-x64.10.0.9.nupkg.sha512",
     "C:\\Users\\iConnect\\.nuget\\packages\\microsoft.windows.sdk.net.ref\\10.0.19041.57\\microsoft.windows.sdk.net.ref.10.0.19041.57.nupkg.sha512"
   ],
   "logs": []

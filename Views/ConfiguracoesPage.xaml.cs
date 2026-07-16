@@ -1,49 +1,82 @@
 using GVC.Mobile.Configuration;
 using GVC.Mobile.Services.Interfaces;
+using GVC.Mobile.Models;
+using GVC.Mobile.Repositories.Interfaces;
 
 namespace GVC.Mobile.Views;
 
 public partial class ConfiguracoesPage : ContentPage
 {
-    private readonly IAppSettingsService
-        _settingsService;
+    private readonly IAppSettingsService _settingsService;
+    private readonly IApiService _apiService;
+    private readonly IEmpresaRepository _empresaRepository;
 
-    private readonly IApiService
-        _apiService;
+    private List<Empresa> _empresas = [];
 
     public ConfiguracoesPage(
-        IAppSettingsService settingsService,
-        IApiService apiService)
+      IAppSettingsService settingsService,
+      IApiService apiService,
+      IEmpresaRepository empresaRepository)
     {
         InitializeComponent();
 
         _settingsService = settingsService;
         _apiService = apiService;
+        _empresaRepository = empresaRepository;
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
-
-        CarregarConfiguracoes();
+        await CarregarConfiguracoesAsync();
     }
 
-    private void CarregarConfiguracoes()
+    private async Task CarregarConfiguracoesAsync()
     {
+        ////Temporariamente, exibe a quantidade de empresas no SQLite para fins de teste
+        //var quantidade = await _empresaRepository.ContarAsync();
+
+        //await DisplayAlert(
+        //    "Empresas",
+        //    $"Qtde de empresas no SQLite: {quantidade}",
+        //    "OK");
+
+        ////Carrega as configurações salvas no SQLite
+
+
+
         var settings =
             _settingsService.Obter();
 
         txtBaseUrl.Text =
             settings.BaseUrl;
 
-        txtEmpresaId.Text =
-            settings.EmpresaID.ToString();
-
         txtApiKey.Text =
             settings.ApiKey;
 
+        _empresas =
+            await _empresaRepository.ObterTodasAsync();
+
+        pckEmpresa.ItemsSource =
+            _empresas;
+
+        pckEmpresa.SelectedItem =
+            _empresas.FirstOrDefault(
+                empresa =>
+                    empresa.EmpresaID ==
+                    settings.EmpresaID);
+
+        if (pckEmpresa.SelectedItem is null &&
+            _empresas.Count > 0)
+        {
+            pckEmpresa.SelectedItem =
+                _empresas[0];
+        }
+
         lblResultado.Text =
-            string.Empty;
+            _empresas.Count == 0
+                ? "Nenhuma empresa sincronizada. Execute a sincronização de dados."
+                : $"{_empresas.Count:N0} empresa(s) disponível(is).";
     }
 
     private async void TestarConexao_Clicked(
@@ -80,9 +113,7 @@ public partial class ConfiguracoesPage : ContentPage
         }
     }
 
-    private async void Salvar_Clicked(
-        object sender,
-        EventArgs e)
+    private async void Salvar_Clicked( object sender, EventArgs e)
     {
         try
         {
@@ -91,6 +122,16 @@ public partial class ConfiguracoesPage : ContentPage
             await DisplayAlertAsync(
                 "Configurações",
                 "Configurações salvas com sucesso.",
+                "OK");
+
+            var empresa = pckEmpresa.SelectedItem as Empresa;
+
+            await DisplayAlertAsync(
+                "Configurações",
+                empresa is null
+                    ? "Configurações salvas com sucesso."
+                    : $"Empresa selecionada:\n{empresa.NomeExibicao}\n\n" +
+                      "As telas de produtos e contas utilizarão esta empresa.",
                 "OK");
         }
         catch (Exception ex)
@@ -118,17 +159,16 @@ public partial class ConfiguracoesPage : ContentPage
 
         _settingsService.RestaurarPadroes();
 
-        CarregarConfiguracoes();
+        await CarregarConfiguracoesAsync();
     }
 
     private void SalvarConfiguracoes()
     {
-        if (!int.TryParse(
-                txtEmpresaId.Text,
-                out var empresaId))
+        if (pckEmpresa.SelectedItem is not Empresa
+            empresaSelecionada)
         {
             throw new ArgumentException(
-                "Informe um código de empresa válido.");
+                "Selecione uma empresa para consulta.");
         }
 
         _settingsService.Salvar(
@@ -146,7 +186,7 @@ public partial class ConfiguracoesPage : ContentPage
                     "X-GVC-API-Key",
 
                 EmpresaID =
-                    empresaId,
+                    empresaSelecionada.EmpresaID,
 
                 Timeout =
                     TimeSpan.FromMinutes(10)

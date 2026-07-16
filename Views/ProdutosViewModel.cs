@@ -1,8 +1,9 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GVC.Mobile.Models;
 using GVC.Mobile.Repositories.Interfaces;
+using GVC.Mobile.Services.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace GVC.Mobile.ViewModels;
 
@@ -10,7 +11,7 @@ public partial class ProdutosViewModel : ObservableObject
 {
     private readonly IProdutoRepository _produtoRepository;
     private CancellationTokenSource? _pesquisaCancellation;
-
+    private readonly IAppSettingsService  _settingsService;
     public ObservableCollection<Produto> Produtos { get; } = [];
 
     [ObservableProperty]
@@ -32,10 +33,10 @@ public partial class ProdutosViewModel : ObservableObject
     [ObservableProperty]
     private Produto? _produtoSelecionado;
 
-    public ProdutosViewModel(
-        IProdutoRepository produtoRepository)
+    public ProdutosViewModel(  IProdutoRepository produtoRepository, IAppSettingsService settingsService)
     {
         _produtoRepository = produtoRepository;
+        _settingsService = settingsService;
     }
 
     [RelayCommand]
@@ -83,20 +84,17 @@ public partial class ProdutosViewModel : ObservableObject
             string.Empty);
     }
 
-    partial void OnTermoPesquisaChanged(
-        string value)
+    partial void OnTermoPesquisaChanged( string value)
     {
         _ = PesquisarComAtrasoAsync(value);
     }
 
-    private async Task PesquisarComAtrasoAsync(
-        string termo)
+    private async Task PesquisarComAtrasoAsync( string termo)
     {
         _pesquisaCancellation?.Cancel();
         _pesquisaCancellation?.Dispose();
 
-        _pesquisaCancellation =
-            new CancellationTokenSource();
+        _pesquisaCancellation =  new CancellationTokenSource();
 
         try
         {
@@ -114,18 +112,18 @@ public partial class ProdutosViewModel : ObservableObject
         }
     }
 
-    private async Task ExecutarPesquisaAsync(
-        string? termo,
-        CancellationToken cancellationToken = default)
+    private async Task ExecutarPesquisaAsync( string? termo,  CancellationToken cancellationToken = default)
     {
         try
         {
             EstaCarregando = true;
 
-            var produtos =
-                await _produtoRepository.PesquisarAsync(
+            var settings =  _settingsService.Obter();
+
+            var produtos = await _produtoRepository.PesquisarAsync(
                     termo,
-                    limite: 200);
+                    settings.EmpresaID,
+                    200);
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -150,9 +148,7 @@ public partial class ProdutosViewModel : ObservableObject
         }
     }
 
-    private static string CriarMensagemResultado(
-        string? termo,
-        int quantidade)
+    private static string CriarMensagemResultado( string? termo, int quantidade)
     {
         if (quantidade == 0)
         {

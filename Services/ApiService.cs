@@ -69,9 +69,7 @@ public sealed class ApiService : IApiService
 
         try
         {
-            var endpoint =
-                $"api/sincronizacao/completa" +
-                $"?empresaId={settings.EmpresaID}";
+            const string endpoint =  "api/sincronizacao/completa";
 
             using var request = CriarRequest(
                 HttpMethod.Get,

@@ -150,72 +150,108 @@
                 BackgroundColor="White"
                 Stroke="#DDE2E6">
 
-                <Border.StrokeShape>
-
-                    <RoundRectangle
-                        CornerRadius="14" />
-
+                    <Border.StrokeShape>
+                        <RoundRectangle
+                CornerRadius="14" />
                 </Border.StrokeShape>
 
                 <VerticalStackLayout Spacing="13">
 
-                    <Label
-                        Text="Preços"
-                        FontSize="17"
+                    <Grid
+                        ColumnDefinitions="*,Auto"
+                        ColumnSpacing="10">
+
+                        <Label
+                Text="Preços"
+                FontSize="17"
+                FontAttributes="Bold"
+                TextColor="#20252A"
+                VerticalOptions="Center" />
+
+                        <Button
+                Grid.Column="1"
+                Text="{Binding TextoBotaoPrecos}"
+                Command="{Binding AlternarPrecosInternosCommand}"
+                Padding="11,6"
+                FontSize="11"
+                BackgroundColor="#EDF4F8"
+                TextColor="#173B57"
+                BorderColor="#B9CEDB"
+                BorderWidth="1" />
+
+                    </Grid>
+
+                    <!-- PREÇO DE COMPRA -->
+                    <Grid
+                    IsVisible="{Binding MostrarPrecosInternos}"
+                    ColumnDefinitions="*,Auto">
+
+                        <Label
+                    Text="Preço de compra"
+                    TextColor="#66717A" />
+
+                        <Label
+                    Grid.Column="1"
+                    Text="{Binding Produto.PrecoCompra,
+                        StringFormat='R$ {0:N2}'}"
+                    FontAttributes="Bold"
+                    TextColor="#20252A" />
+
+                    </Grid>
+
+                    <!-- PREÇO DE CUSTO -->
+                    <Grid
+                        IsVisible="{Binding MostrarPrecosInternos}"
+                        ColumnDefinitions="*,Auto">
+
+                        <Label
+                        Text="Preço de custo"
+                        TextColor="#66717A" />
+
+                        <Label
+                        Grid.Column="1"
+                        Text="{Binding Produto.PrecoCusto,
+                            StringFormat='R$ {0:N2}'}"
                         FontAttributes="Bold"
                         TextColor="#20252A" />
 
+                    </Grid>
+
+                    <!-- PREÇO DE VENDA SEMPRE VISÍVEL -->
                     <Grid
-                        ColumnDefinitions="*,Auto"
-                        RowDefinitions="Auto,Auto,Auto"
-                        RowSpacing="12">
+                     ColumnDefinitions="*,Auto">
 
                         <Label
-                            Grid.Row="0"
-                            Text="Preço de compra"
-                            TextColor="#66717A" />
-
-                        <Label
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            Text="{Binding Produto.PrecoCompra,
-                                StringFormat='R$ {0:N2}'}"
-                            FontAttributes="Bold"
-                            TextColor="#20252A" />
-
-                        <Label
-                            Grid.Row="1"
-                            Text="Preço de custo"
-                            TextColor="#66717A" />
-
-                        <Label
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Text="{Binding Produto.PrecoCusto,
-                                StringFormat='R$ {0:N2}'}"
-                            FontAttributes="Bold"
-                            TextColor="#20252A" />
-
-                        <Label
-                            Grid.Row="2"
                             Text="Preço de venda"
                             FontAttributes="Bold"
-                            TextColor="#16734A" />
+                            TextColor="#16734A"
+                            VerticalOptions="Center" />
 
                         <Label
-                            Grid.Row="2"
-                            Grid.Column="1"
-                            Text="{Binding Produto.PrecoDeVenda,
-                                StringFormat='R$ {0:N2}'}"
-                            FontSize="21"
-                            FontAttributes="Bold"
-                            TextColor="#16734A" />
+                        Grid.Column="1"
+                        Text="{Binding Produto.PrecoDeVenda,
+                            StringFormat='R$ {0:N2}'}"
+                        FontSize="22"
+                        FontAttributes="Bold"
+                        TextColor="#16734A" />
 
                     </Grid>
 
                 </VerticalStackLayout>
 
             </Border>
+
+
+            <Button
+                Text="Enviar card pelo WhatsApp"
+                HeightRequest="54"
+                FontSize="16"
+                FontAttributes="Bold"
+                BackgroundColor="#16734A"
+                TextColor="White"
+                Clicked="CompartilharProduto_Clicked" />
+
+
 
             <Border
                 Padding="14"

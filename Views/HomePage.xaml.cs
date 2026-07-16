@@ -33,8 +33,8 @@ public partial class HomePage : ContentPage
     {
         var confirmar =
             await DisplayAlertAsync(
-                "Sincronizar produtos",
-                "Deseja baixar novamente todos os produtos e imagens?",
+                "Sincronizar dados",
+                "Deseja atualizar produtos, clientes, contas a receber e imagens?",
                 "Sincronizar",
                 "Cancelar");
 
@@ -48,12 +48,15 @@ public partial class HomePage : ContentPage
             resultado.Sucesso
                 ? "Sincronização concluída"
                 : "Falha na sincronização",
-            resultado.Sucesso
-                ? $"Produtos: {resultado.QuantidadeProdutos}\n" +
-                  $"Imagens: {resultado.QuantidadeImagens}\n" +
-                  $"Versão: {resultado.Versao}"
-                : resultado.Mensagem,
-            "OK");
+
+                resultado.Sucesso
+                        ? $"Empresas: {resultado.QuantidadeEmpresas:N0}\n" +
+                          $"Produtos: {resultado.QuantidadeProdutos:N0}\n" +
+                          $"Clientes: {resultado.QuantidadeClientes:N0}\n" +
+                          $"Contas a receber: {resultado.QuantidadeContasReceber:N0}\n" +
+                          $"Imagens: {resultado.QuantidadeImagens:N0}\n" +
+                          $"Versão: {resultado.Versao}"
+                        : resultado.Mensagem,"OK");
     }
 
     private async void ConsultarProdutos_Clicked(
@@ -87,5 +90,28 @@ public partial class HomePage : ContentPage
                 SobrePage>();
 
         await Navigation.PushAsync(pagina);
+    }
+    private async void ContasReceber_Clicked(object sender, EventArgs e)
+    {
+        var pagina =
+            _serviceProvider.GetRequiredService<
+                ClientesContasPage>();
+
+        await Navigation.PushAsync(pagina);
+    }
+    private async void Sair_Clicked( object sender, EventArgs e)
+    {
+        var confirmar = await DisplayAlertAsync(
+            "Sair do aplicativo",
+            "Deseja realmente encerrar o GVC Mobile?",
+            "Sair",
+            "Cancelar");
+
+        if (!confirmar)
+            return;
+
+        _viewModel.CancelarSincronizacao();
+
+        Application.Current?.Quit();
     }
 }

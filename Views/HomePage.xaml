@@ -158,7 +158,17 @@
                 Clicked="ConsultarProdutos_Clicked" />
 
             <Button
-                Text="Sincronizar produtos"
+                Text="Contas a receber"
+                HeightRequest="54"
+                FontSize="16"
+                FontAttributes="Bold"
+                BackgroundColor="#B26B00"
+                TextColor="White"
+                Clicked="ContasReceber_Clicked" />
+            
+            
+            <Button
+                Text="Sincronizar dados"
                 HeightRequest="54"
                 FontSize="16"
                 FontAttributes="Bold"
@@ -182,6 +192,14 @@
                 BackgroundColor="Transparent"
                 TextColor="#59656E"
                 Clicked="Sobre_Clicked" />
+
+            <Button
+                Text="Sair do aplicativo"
+                HeightRequest="46"
+                BackgroundColor="Transparent"
+                TextColor="#A12727"
+                FontAttributes="Bold"
+                Clicked="Sair_Clicked" />
 
             <VerticalStackLayout
                 Spacing="7"

@@ -32,8 +32,10 @@ public sealed class DatabaseService
                 SQLiteOpenFlags.Create |
                 SQLiteOpenFlags.SharedCache);
 
+            await _database.CreateTableAsync<Empresa>();
             await _database.CreateTableAsync<Produto>();
-
+            await _database.CreateTableAsync<Cliente>();
+            await _database.CreateTableAsync<ContaReceber>();
             await _database.CreateTableAsync<ConfiguracaoLocal>();
         }
         finally

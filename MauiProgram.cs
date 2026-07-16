@@ -48,6 +48,25 @@ public static class MauiProgram
             ISincronizacaoService,
             SincronizacaoService>();
 
+        builder.Services.AddSingleton<
+            IProdutoCardService,
+            ProdutoCardService>();
+
+
+        builder.Services.AddSingleton<
+            IClienteRepository,
+            ClienteRepository>();
+
+        builder.Services.AddSingleton<
+            IContaReceberRepository,
+            ContaReceberRepository>();
+
+        builder.Services.AddSingleton<
+            IEmpresaRepository,
+            EmpresaRepository>();
+
+
+
         // -------------------------------------------------
         // HTTP / API
         // -------------------------------------------------
@@ -66,11 +85,25 @@ public static class MauiProgram
         // -------------------------------------------------
 
         builder.Services.AddTransient<HomeViewModel>();
+        builder.Services.AddTransient<HomePage>();
 
         builder.Services.AddTransient<ProdutosViewModel>();
+        builder.Services.AddTransient<ProdutosPage>();
 
-        builder.Services.AddTransient<
-            ProdutoDetalheViewModel>();
+        builder.Services.AddTransient<ProdutoDetalheViewModel>();
+        builder.Services.AddTransient<ProdutoDetalhePage>();
+
+        builder.Services.AddTransient<ClientesContasViewModel>();
+        builder.Services.AddTransient<ClientesContasPage>();
+
+        builder.Services.AddTransient<ContasClienteViewModel>();
+        builder.Services.AddTransient<ContasClientePage>();
+
+        builder.Services.AddTransient<ConfiguracoesPage>();
+        builder.Services.AddTransient<SobrePage>();
+
+
+
 
         // -------------------------------------------------
         // PÁGINAS

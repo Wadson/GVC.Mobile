@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System.IO.Compression;
 using System.Text.Json;
 
+
 namespace GVC.Mobile.Services;
 
 public sealed class SincronizacaoService : ISincronizacaoService
@@ -15,12 +16,14 @@ public sealed class SincronizacaoService : ISincronizacaoService
         "GVC-SYNC-1.0";
 
     private readonly IApiService _apiService;
+    private readonly IEmpresaRepository _empresaRepository;
     private readonly IProdutoRepository _produtoRepository;
+    private readonly IClienteRepository _clienteRepository;
+    private readonly IContaReceberRepository _contaReceberRepository;
     private readonly DatabaseService _databaseService;
     private readonly ILogger<SincronizacaoService> _logger;
-
-    private readonly SemaphoreSlim _sincronizacaoLock =
-        new(1, 1);
+    private readonly SemaphoreSlim _sincronizacaoLock = new(1, 1);
+    private readonly IAppSettingsService  _settingsService;
 
     private static readonly JsonSerializerOptions JsonOptions =
         new()
@@ -29,30 +32,32 @@ public sealed class SincronizacaoService : ISincronizacaoService
         };
 
     public SincronizacaoService(
-        IApiService apiService,
-        IProdutoRepository produtoRepository,
-        DatabaseService databaseService,
-        ILogger<SincronizacaoService> logger)
+       IApiService apiService,
+       IAppSettingsService settingsService,
+       IEmpresaRepository empresaRepository,
+       IProdutoRepository produtoRepository,
+       IClienteRepository clienteRepository,
+       IContaReceberRepository contaReceberRepository,
+       DatabaseService databaseService,
+       ILogger<SincronizacaoService> logger)
     {
         _apiService = apiService;
+        _settingsService = settingsService;
+        _empresaRepository = empresaRepository;
         _produtoRepository = produtoRepository;
+        _clienteRepository = clienteRepository;
+        _contaReceberRepository = contaReceberRepository;
         _databaseService = databaseService;
         _logger = logger;
     }
 
-    public async Task<SincronizacaoResult> SincronizarAsync(
-        IProgress<double>? progresso = null,
-        CancellationToken cancellationToken = default)
+    public async Task<SincronizacaoResult> SincronizarAsync(IProgress<double>? progresso = null, CancellationToken cancellationToken = default)
     {
-        if (!await _sincronizacaoLock.WaitAsync(
-                0,
-                cancellationToken))
+        if (!await _sincronizacaoLock.WaitAsync(0, cancellationToken))
         {
             return new SincronizacaoResult
             {
-                Sucesso = false,
-                Mensagem =
-                    "Já existe uma sincronização em andamento."
+                Sucesso = false, Mensagem = "Já existe uma sincronização em andamento."
             };
         }
 
@@ -117,29 +122,95 @@ public sealed class SincronizacaoService : ISincronizacaoService
                 caminhoZip,
                 pastaExtracao);
 
+            var arquivosExtraidos = Directory
+                .EnumerateFiles(
+                    pastaExtracao,
+                    "*",
+                    SearchOption.AllDirectories)
+                .Select(arquivo =>
+                    Path.GetRelativePath(
+                        pastaExtracao,
+                        arquivo))
+                .ToList();
+
+            _logger.LogInformation(
+                "Arquivos extraídos do pacote: {Arquivos}",
+                string.Join(
+                    " | ",
+                    arquivosExtraidos));
+
             progresso?.Report(0.62);
+
+            var caminhoManifest =
+                LocalizarArquivoObrigatorio(
+                    pastaExtracao,
+                    "manifest.json");
+
+            var caminhoEmpresas =
+                LocalizarArquivoObrigatorio(
+                    pastaExtracao,
+                    "empresas.json");
+
+            var caminhoProdutos =
+                LocalizarArquivoObrigatorio(
+                    pastaExtracao,
+                    "produtos.json");
+
+            var caminhoClientes =
+                LocalizarArquivoObrigatorio(
+                    pastaExtracao,
+                    "clientes.json");
+
+            var caminhoContasReceber =
+                LocalizarArquivoObrigatorio(
+                    pastaExtracao,
+                    "contas-receber.json");
 
             var manifest =
                 await LerJsonAsync<SyncManifestDto>(
-                    Path.Combine(
-                        pastaExtracao,
-                        "manifest.json"),
+                    caminhoManifest,
                     cancellationToken);
 
             ValidarManifest(manifest);
 
-            var produtosDto =
-                await LerJsonAsync<List<ProdutoSyncDto>>(
-                    Path.Combine(
-                        pastaExtracao,
-                        "produtos.json"),
+            var empresasDto =
+                await LerJsonAsync<List<EmpresaSyncDto>>(
+                    caminhoEmpresas,
                     cancellationToken);
 
-            if (produtosDto.Count !=
-                manifest.QuantidadeProdutos)
+            var produtosDto =
+                await LerJsonAsync<List<ProdutoSyncDto>>(
+                    caminhoProdutos,
+                    cancellationToken);
+
+            var clientesDto =
+                await LerJsonAsync<List<ClienteSyncDto>>(
+                    caminhoClientes,
+                    cancellationToken);
+
+            var contasReceberDto =
+                await LerJsonAsync<List<ContaReceberSyncDto>>(
+                    caminhoContasReceber,
+                    cancellationToken);
+
+
+            if (empresasDto.Count != manifest.QuantidadeEmpresas)
             {
-                throw new InvalidDataException(
-                    "A quantidade de produtos do arquivo não corresponde ao manifesto.");
+                throw new InvalidDataException( "A quantidade de empresas do arquivo não corresponde ao manifesto.");
+            }
+
+            if (produtosDto.Count !=  manifest.QuantidadeProdutos)
+            {
+                throw new InvalidDataException( "A quantidade de produtos do arquivo não corresponde ao manifesto.");
+            }
+            if (clientesDto.Count != manifest.QuantidadeClientes)
+            {
+                throw new InvalidDataException( "A quantidade de clientes do arquivo não corresponde ao manifesto.");
+            }
+
+            if (contasReceberDto.Count != manifest.QuantidadeContasReceber)
+            {
+                throw new InvalidDataException( "A quantidade de contas a receber do arquivo não corresponde ao manifesto.");
             }
 
             progresso?.Report(0.70);
@@ -149,42 +220,74 @@ public sealed class SincronizacaoService : ISincronizacaoService
                     pastaExtracao,
                     cancellationToken);
 
+            var empresas =
+                ConverterEmpresas(
+                    empresasDto);
+
+
+
             var produtos =
-                ConverterProdutos(
-                    produtosDto,
-                    pastaImagensNova);
+                 ConverterProdutos(
+                     produtosDto,
+                pastaImagensNova);
+
+            var clientes =
+                ConverterClientes(
+                    clientesDto);
+
+            var contasReceber =
+                ConverterContasReceber(
+                    contasReceberDto);
+
+            progresso?.Report(0.78);
+
+
+            progresso?.Report(0.76);
+
+            // Empresas
+            await _empresaRepository.SubstituirTodasAsync(
+                empresas);
+
+            GarantirEmpresaSelecionada(
+                empresas);
 
             progresso?.Report(0.80);
 
+            // Produtos
             await _produtoRepository.SubstituirTodosAsync(
                 produtos);
 
-            progresso?.Report(0.92);
+            progresso?.Report(0.85);
 
-            await SalvarConfiguracoesAsync(
-                manifest);
+            // Clientes
+            await _clienteRepository.LimparAsync();
 
-            AtivarNovaPastaDeImagens(
-                pastaImagensNova);
+            await _clienteRepository.InserirOuAtualizarAsync(
+                clientes);
 
-            pastaImagensNova = null;
+            progresso?.Report(0.90);
 
-            progresso?.Report(1);
+            // Contas a receber
+            await _contaReceberRepository.LimparAsync();
+
+            await _contaReceberRepository.InserirOuAtualizarAsync(
+                contasReceber);
+
+            progresso?.Report(0.94);
 
             return new SincronizacaoResult
             {
                 Sucesso = true,
-                Mensagem =
-                    "Sincronização concluída com sucesso.",
+                Mensagem = "Sincronização concluída com sucesso.",
                 Versao = manifest.Versao,
-                QuantidadeProdutos =
-                    manifest.QuantidadeProdutos,
-                QuantidadeImagens =
-                    manifest.QuantidadeImagens,
-                QuantidadeImagensAusentes =
-                    manifest.QuantidadeImagensAusentes,
-                DataGeracaoUtc =
-                    manifest.DataGeracaoUtc
+
+                        QuantidadeEmpresas =   manifest.QuantidadeEmpresas,
+                        QuantidadeProdutos = manifest.QuantidadeProdutos,
+                        QuantidadeClientes = manifest.QuantidadeClientes,
+                        QuantidadeContasReceber = manifest.QuantidadeContasReceber,
+                        QuantidadeImagens = manifest.QuantidadeImagens,
+                        QuantidadeImagensAusentes = manifest.QuantidadeImagensAusentes,
+                        DataGeracaoUtc =  manifest.DataGeracaoUtc
             };
         }
         catch (OperationCanceledException)
@@ -223,7 +326,35 @@ public sealed class SincronizacaoService : ISincronizacaoService
             _sincronizacaoLock.Release();
         }
     }
+    private void GarantirEmpresaSelecionada(
+    IReadOnlyCollection<Empresa> empresas)
+    {
+        if (empresas.Count == 0)
+            return;
 
+        var settings =
+            _settingsService.Obter();
+
+        var empresaAtualExiste =
+            empresas.Any(empresa =>
+                empresa.EmpresaID ==
+                settings.EmpresaID);
+
+        if (empresaAtualExiste)
+            return;
+
+        var primeiraEmpresa =
+            empresas
+                .OrderBy(empresa =>
+                    empresa.NomeExibicao)
+                .First();
+
+        settings.EmpresaID =
+            primeiraEmpresa.EmpresaID;
+
+        _settingsService.Salvar(
+            settings);
+    }
     private static string CriarPastaTemporaria()
     {
         var pasta = Path.Combine(
@@ -236,10 +367,9 @@ public sealed class SincronizacaoService : ISincronizacaoService
         return pasta;
     }
 
-    private static void ExtrairPacoteComSeguranca(
-        string caminhoZip,
-        string pastaDestino)
+    private static void ExtrairPacoteComSeguranca( string caminhoZip, string pastaDestino)
     {
+
         using var archive =
             ZipFile.OpenRead(caminhoZip);
 
@@ -294,6 +424,66 @@ public sealed class SincronizacaoService : ISincronizacaoService
         }
     }
 
+    private static string LocalizarArquivoObrigatorio(
+    string pastaExtracao,
+    string nomeArquivo)
+    {
+        if (string.IsNullOrWhiteSpace(pastaExtracao))
+        {
+            throw new ArgumentException(
+                "A pasta de extração não foi informada.",
+                nameof(pastaExtracao));
+        }
+
+        if (string.IsNullOrWhiteSpace(nomeArquivo))
+        {
+            throw new ArgumentException(
+                "O nome do arquivo não foi informado.",
+                nameof(nomeArquivo));
+        }
+
+        if (!Directory.Exists(pastaExtracao))
+        {
+            throw new DirectoryNotFoundException(
+                $"A pasta de extração não foi encontrada: {pastaExtracao}");
+        }
+
+        var arquivos = Directory.EnumerateFiles(
+            pastaExtracao,
+            "*",
+            SearchOption.AllDirectories);
+
+        var arquivoEncontrado = arquivos.FirstOrDefault(
+            arquivo =>
+                string.Equals(
+                    Path.GetFileName(arquivo),
+                    nomeArquivo,
+                    StringComparison.OrdinalIgnoreCase));
+
+        if (arquivoEncontrado is null)
+        {
+            var arquivosEncontrados = Directory
+                .EnumerateFiles(
+                    pastaExtracao,
+                    "*",
+                    SearchOption.AllDirectories)
+                .Select(Path.GetFileName)
+                .Where(nome => !string.IsNullOrWhiteSpace(nome))
+                .OrderBy(nome => nome)
+                .ToList();
+
+            var lista = arquivosEncontrados.Count == 0
+                ? "Nenhum arquivo foi extraído."
+                : string.Join(", ", arquivosEncontrados);
+
+            throw new FileNotFoundException(
+                $"O arquivo obrigatório '{nomeArquivo}' não foi encontrado. " +
+                $"Arquivos extraídos: {lista}");
+        }
+
+        return arquivoEncontrado;
+    }
+
     private static async Task<T> LerJsonAsync<T>(
         string caminhoArquivo,
         CancellationToken cancellationToken)
@@ -344,10 +534,7 @@ public sealed class SincronizacaoService : ISincronizacaoService
         }
     }
 
-    private static async Task<string>
-        PrepararImagensAsync(
-            string pastaExtracao,
-            CancellationToken cancellationToken)
+    private static async Task<string> PrepararImagensAsync(string pastaExtracao,  CancellationToken cancellationToken)
     {
         var pastaOrigem = Path.Combine(
             pastaExtracao,
@@ -407,10 +594,50 @@ public sealed class SincronizacaoService : ISincronizacaoService
 
         return pastaNova;
     }
+    private static List<Empresa> ConverterEmpresas( IReadOnlyCollection<EmpresaSyncDto> empresasDto)
+    {
+        var empresas =
+            new List<Empresa>(empresasDto.Count);
 
-    private static List<Produto> ConverterProdutos(
-        IReadOnlyCollection<ProdutoSyncDto> produtosDto,
-        string pastaImagensNova)
+        foreach (var dto in empresasDto)
+        {
+            empresas.Add(new Empresa
+            {
+                EmpresaID =
+                    dto.EmpresaID,
+
+                RazaoSocial =
+                    dto.RazaoSocial?.Trim()
+                    ?? string.Empty,
+
+                NomeFantasia =
+                    dto.NomeFantasia?.Trim(),
+
+                CNPJ =
+                    dto.CNPJ?.Trim()
+                    ?? string.Empty,
+
+                InscricaoEstadual =
+                    dto.InscricaoEstadual?.Trim(),
+
+                Telefone =
+                    dto.Telefone?.Trim(),
+
+                Email =
+                    dto.Email?.Trim(),
+
+                Site =
+                    dto.Site?.Trim(),
+
+                Logo =
+                    dto.Logo
+            });
+        }
+
+        return empresas;
+    }
+
+    private static List<Produto> ConverterProdutos( IReadOnlyCollection<ProdutoSyncDto> produtosDto, string pastaImagensNova)
     {
         var produtos =
             new List<Produto>(
@@ -473,8 +700,7 @@ public sealed class SincronizacaoService : ISincronizacaoService
         return produtos;
     }
 
-    private async Task SalvarConfiguracoesAsync(
-        SyncManifestDto manifest)
+    private async Task SalvarConfiguracoesAsync( SyncManifestDto manifest)
     {
         var database =
             await _databaseService.ObterConexaoAsync();
@@ -509,8 +735,26 @@ public sealed class SincronizacaoService : ISincronizacaoService
                         "QuantidadeImagens",
                     Valor =
                         manifest.QuantidadeImagens.ToString()
-                }
-            };
+                },
+                new ConfiguracaoLocal
+                {
+                    Chave = "QuantidadeClientes",
+                    Valor = manifest.QuantidadeClientes.ToString()
+                },
+                new ConfiguracaoLocal
+                {
+                    Chave = "QuantidadeContasReceber",
+                    Valor = manifest.QuantidadeContasReceber.ToString()
+                },
+                new ConfiguracaoLocal
+                {
+                    Chave = "QuantidadeEmpresas",
+                    Valor =
+                        manifest.QuantidadeEmpresas.ToString()
+                },
+
+
+                            };
 
         foreach (var configuracao in configuracoes)
         {
@@ -547,7 +791,75 @@ public sealed class SincronizacaoService : ISincronizacaoService
         ExcluirDiretorioSilenciosamente(
             pastaBackup);
     }
+    private static List<Cliente> ConverterClientes(
+    IReadOnlyCollection<ClienteSyncDto> clientesDto)
+    {
+        var clientes =
+            new List<Cliente>(clientesDto.Count);
 
+        foreach (var dto in clientesDto)
+        {
+            clientes.Add(new Cliente
+            {
+                ClienteID = dto.ClienteID,
+                Nome = dto.Nome?.Trim() ?? string.Empty,
+                Cpf = dto.Cpf?.Trim(),
+                Cnpj = dto.Cnpj?.Trim(),
+                Telefone = dto.Telefone?.Trim(),
+                Email = dto.Email?.Trim(),
+                TipoCliente = dto.TipoCliente?.Trim(),
+                Status = dto.Status,
+                LimiteCredito = dto.LimiteCredito,
+                DataUltimaCompra = dto.DataUltimaCompra,
+                EmpresaID = dto.EmpresaID
+            });
+        }
+
+        return clientes;
+    }
+
+
+    private static List<ContaReceber> ConverterContasReceber(
+    IReadOnlyCollection<ContaReceberSyncDto> contasDto)
+    {
+        var contas =
+            new List<ContaReceber>(contasDto.Count);
+
+        foreach (var dto in contasDto)
+        {
+            contas.Add(new ContaReceber
+            {
+                ParcelaID = dto.ParcelaID,
+                VendaID = dto.VendaID,
+                ClienteID = dto.ClienteID,
+                NomeCliente = dto.NomeCliente?.Trim() ?? string.Empty,
+                NumeroParcela = dto.NumeroParcela,
+                DataVenda = dto.DataVenda,
+                DataVencimento = dto.DataVencimento,
+                ValorParcela = dto.ValorParcela,
+                ValorRecebido = dto.ValorRecebido,
+                Juros = dto.Juros,
+                Multa = dto.Multa,
+                Saldo = dto.Saldo,
+                StatusParcela = dto.StatusParcela?.Trim() ?? string.Empty,
+                FormaPgtoID = dto.FormaPgtoID,
+                NomeFormaPagamento =
+                    dto.NomeFormaPagamento?.Trim(),
+                DataPagamento = dto.DataPagamento,
+                ObservacaoParcela =
+                    dto.ObservacaoParcela?.Trim(),
+                ObservacaoVenda =
+                    dto.ObservacaoVenda?.Trim(),
+                TotalBrutoVenda = dto.TotalBrutoVenda,
+                TotalDescontoVenda = dto.TotalDescontoVenda,
+                TotalLiquidoVenda = dto.TotalLiquidoVenda,
+                StatusVenda = dto.StatusVenda?.Trim() ?? string.Empty,
+                EmpresaID = dto.EmpresaID
+            });
+        }
+
+        return contas;
+    }
     private static void ExcluirArquivoSilenciosamente(
         string? caminho)
     {

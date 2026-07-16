@@ -34,7 +34,7 @@
 		<ApplicationId>com.companyname.gvc.mobile</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
@@ -72,13 +72,20 @@
 		<PackageReference Include="Microsoft.Extensions.Http" Version="11.0.0-preview.5.26302.115" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
+		<PackageReference Include="SkiaSharp" Version="4.151.0-preview.2.1" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.11.284-beta" />
 		<PackageReference Include="SQLitePCLRawEx.bundle_green" Version="2.1.2-pre20220801070813" />
 	</ItemGroup>
 
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\ClientesContasPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\ConfiguracoesPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\ContasClientePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\HomePage.xaml">

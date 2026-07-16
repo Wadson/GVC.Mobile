@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="GVC.Mobile.Views.ClientesContasPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:GVC.Mobile.Models"
+    xmlns:viewModels="clr-namespace:GVC.Mobile.ViewModels"
+    x:DataType="viewModels:ClientesContasViewModel"
+    Title="Contas a Receber"
+    BackgroundColor="#F3F5F7">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
+
+        <!-- CABEÇALHO -->
+        <Border
+            Grid.Row="0"
+            Padding="18,16"
+            BackgroundColor="#173B57"
+            StrokeThickness="0">
+
+            <Grid
+                ColumnDefinitions="*,Auto"
+                ColumnSpacing="12">
+
+                <VerticalStackLayout Spacing="3">
+
+                    <Label
+                        Text="Contas a Receber"
+                        FontSize="23"
+                        FontAttributes="Bold"
+                        TextColor="White" />
+
+                    <Label
+                        Text="{Binding ResumoGeral}"
+                        FontSize="12"
+                        TextColor="#D9E6EF" />
+
+                </VerticalStackLayout>
+
+                <ActivityIndicator
+                    Grid.Column="1"
+                    IsVisible="{Binding EstaCarregando}"
+                    IsRunning="{Binding EstaCarregando}"
+                    Color="White"
+                    HeightRequest="28"
+                    WidthRequest="28"
+                    VerticalOptions="Center" />
+
+            </Grid>
+
+        </Border>
+
+        <!-- CARDS -->
+        <Grid
+            Grid.Row="1"
+            Margin="12,12,12,8"
+            ColumnDefinitions="*,*"
+            ColumnSpacing="10">
+
+            <Border
+                Grid.Column="0"
+                Padding="13"
+                BackgroundColor="White"
+                Stroke="#DDE2E6">
+
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="13" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="4">
+
+                    <Label
+                        Text="Saldo em aberto"
+                        FontSize="11"
+                        TextColor="#68747D" />
+
+                    <Label
+                        Text="{Binding TotalEmAberto,
+                            StringFormat='R$ {0:N2}'}"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        TextColor="#173B57" />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <Border
+                Grid.Column="1"
+                Padding="13"
+                BackgroundColor="#FFF5F5"
+                Stroke="#E7B6B6">
+
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="13" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="4">
+
+                    <Label
+                        Text="Saldo vencido"
+                        FontSize="11"
+                        TextColor="#8A4A4A" />
+
+                    <Label
+                        Text="{Binding TotalVencido,
+                            StringFormat='R$ {0:N2}'}"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        TextColor="#A12727" />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+        </Grid>
+
+        <!-- PESQUISA -->
+        <Grid
+            Grid.Row="2"
+            Margin="12,2,12,8"
+            RowDefinitions="Auto,Auto">
+
+            <Border
+                Grid.Row="0"
+                Padding="3"
+                BackgroundColor="White"
+                Stroke="#D6DCE1">
+
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="13" />
+                </Border.StrokeShape>
+
+                <SearchBar
+                    Text="{Binding TermoPesquisa}"
+                    Placeholder="Nome, código, CPF, CNPJ ou telefone"
+                    BackgroundColor="Transparent"
+                    TextColor="#20252A"
+                    PlaceholderColor="#7C858D"
+                    CancelButtonColor="#173B57" />
+
+            </Border>
+
+            <Grid
+                Grid.Row="1"
+                Margin="5,5,5,0"
+                ColumnDefinitions="*,Auto">
+
+                <Label
+                    Text="{Binding MensagemStatus}"
+                    FontSize="12"
+                    TextColor="#66717A"
+                    VerticalOptions="Center" />
+
+                <Button
+                    Grid.Column="1"
+                    Text="Limpar"
+                    Command="{Binding LimparPesquisaCommand}"
+                    IsVisible="{Binding PodeLimparPesquisa}"
+                    Padding="10,3"
+                    FontSize="12"
+                    BackgroundColor="Transparent"
+                    TextColor="#173B57" />
+
+            </Grid>
+
+        </Grid>
+
+        <!-- CLIENTES -->
+        <CollectionView
+            x:Name="cvClientes"
+            Grid.Row="3"
+            Margin="10,0,10,10"
+            ItemsSource="{Binding Clientes}"
+            SelectedItem="{Binding ClienteSelecionado}"
+            SelectionMode="Single"
+            SelectionChanged="cvClientes_SelectionChanged">
+
+            <CollectionView.EmptyView>
+
+                <VerticalStackLayout
+                    Padding="35"
+                    Spacing="10"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+
+                    <Label
+                        Text="Nenhuma conta encontrada"
+                        FontSize="17"
+                        FontAttributes="Bold"
+                        TextColor="#4E5961"
+                        HorizontalTextAlignment="Center" />
+
+                    <Label
+                        Text="Sincronize os dados ou altere os termos da pesquisa."
+                        FontSize="13"
+                        TextColor="#7C858D"
+                        HorizontalTextAlignment="Center" />
+
+                </VerticalStackLayout>
+
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+
+                <DataTemplate x:DataType="models:ClienteContaResumo">
+
+                    <Border
+                        Margin="2,5"
+                        Padding="14"
+                        BackgroundColor="White"
+                        Stroke="#DDE2E6">
+
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="14" />
+                        </Border.StrokeShape>
+
+                        <Grid
+                            RowDefinitions="Auto,Auto,Auto"
+                            ColumnDefinitions="*,Auto"
+                            RowSpacing="7">
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Text="{Binding Nome}"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                TextColor="#20252A"
+                                LineBreakMode="TailTruncation" />
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Text="{Binding ClienteID,
+                                    StringFormat='Cód. {0}'}"
+                                FontSize="11"
+                                TextColor="#7A848C" />
+
+                            <VerticalStackLayout
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Spacing="2">
+
+                                <Label
+                                    Text="{Binding Documento}"
+                                    FontSize="12"
+                                    TextColor="#5E6971" />
+
+                                <Label
+                                    Text="{Binding Telefone}"
+                                    FontSize="12"
+                                    TextColor="#5E6971" />
+
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Spacing="2"
+                                HorizontalOptions="End">
+
+                                <Label
+                                    Text="Saldo em aberto"
+                                    FontSize="10"
+                                    TextColor="#7A848C"
+                                    HorizontalTextAlignment="End" />
+
+                                <Label
+                                    Text="{Binding SaldoEmAberto,
+                                        StringFormat='R$ {0:N2}'}"
+                                    FontSize="17"
+                                    FontAttributes="Bold"
+                                    TextColor="#173B57"
+                                    HorizontalTextAlignment="End" />
+
+                            </VerticalStackLayout>
+
+                            <Grid
+                                Grid.Row="2"
+                                Grid.ColumnSpan="2"
+                                ColumnDefinitions="*,Auto,Auto"
+                                ColumnSpacing="10">
+
+                                <Label
+                                    Text="{Binding QuantidadeParcelas,
+                                        StringFormat='{0} parcela(s)'}"
+                                    FontSize="11"
+                                    TextColor="#68747D" />
+
+                                <Label
+                                    Grid.Column="1"
+                                    Text="{Binding QuantidadeAtrasadas,
+                                        StringFormat='{0} atrasada(s)'}"
+                                    FontSize="11"
+                                    FontAttributes="Bold"
+                                    TextColor="#A12727" />
+
+                                <Label
+                                    Grid.Column="2"
+                                    Text="Ver detalhes ›"
+                                    FontSize="11"
+                                    FontAttributes="Bold"
+                                    TextColor="#16734A" />
+
+                            </Grid>
+
+                        </Grid>
+
+                    </Border>
+
+                </DataTemplate>
+
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

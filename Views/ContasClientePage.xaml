@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="GVC.Mobile.Views.ContasClientePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:GVC.Mobile.Models"
+    xmlns:viewModels="clr-namespace:GVC.Mobile.ViewModels"
+    x:DataType="viewModels:ContasClienteViewModel"
+    Title="Parcelas do Cliente"
+    BackgroundColor="#F3F5F7">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
+
+        <!-- CLIENTE -->
+        <Border
+            Grid.Row="0"
+            Padding="18,15"
+            BackgroundColor="#173B57"
+            StrokeThickness="0">
+
+            <VerticalStackLayout Spacing="4">
+
+                <Label
+                    Text="{Binding Cliente.Nome}"
+                    FontSize="21"
+                    FontAttributes="Bold"
+                    TextColor="White"
+                    LineBreakMode="TailTruncation" />
+
+                <Label
+                    Text="{Binding Cliente.Documento}"
+                    FontSize="12"
+                    TextColor="#D9E6EF" />
+
+            </VerticalStackLayout>
+
+        </Border>
+
+        <!-- RESUMOS -->
+        <Grid
+            Grid.Row="1"
+            Margin="10,10,10,6"
+            RowDefinitions="Auto,Auto"
+            ColumnDefinitions="*,*"
+            RowSpacing="8"
+            ColumnSpacing="8">
+
+            <Border
+                Grid.Row="0"
+                Grid.Column="0"
+                Padding="12"
+                BackgroundColor="White"
+                Stroke="#DDE2E6">
+
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="3">
+
+                    <Label
+                        Text="Total das parcelas"
+                        FontSize="10"
+                        TextColor="#68747D" />
+
+                    <Label
+                        Text="{Binding TotalParcelas,
+                            StringFormat='R$ {0:N2}'}"
+                        FontSize="17"
+                        FontAttributes="Bold"
+                        TextColor="#20252A" />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <Border
+                Grid.Row="0"
+                Grid.Column="1"
+                Padding="12"
+                BackgroundColor="#EDF8F2"
+                Stroke="#BADCC9">
+
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="3">
+
+                    <Label
+                        Text="Total recebido"
+                        FontSize="10"
+                        TextColor="#4D7560" />
+
+                    <Label
+                        Text="{Binding TotalRecebido,
+                            StringFormat='R$ {0:N2}'}"
+                        FontSize="17"
+                        FontAttributes="Bold"
+                        TextColor="#16734A" />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <Border
+                Grid.Row="1"
+                Grid.Column="0"
+                Padding="12"
+                BackgroundColor="#EDF4F8"
+                Stroke="#B9CEDB">
+
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="3">
+
+                    <Label
+                        Text="Saldo em aberto"
+                        FontSize="10"
+                        TextColor="#506B7C" />
+
+                    <Label
+                        Text="{Binding SaldoEmAberto,
+                            StringFormat='R$ {0:N2}'}"
+                        FontSize="17"
+                        FontAttributes="Bold"
+                        TextColor="#173B57" />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <Border
+                Grid.Row="1"
+                Grid.Column="1"
+                Padding="12"
+                BackgroundColor="#FFF0F0"
+                Stroke="#E5B7B7">
+
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="3">
+
+                    <Label
+                        Text="Saldo vencido"
+                        FontSize="10"
+                        TextColor="#8A4A4A" />
+
+                    <Label
+                        Text="{Binding SaldoVencido,
+                            StringFormat='R$ {0:N2}'}"
+                        FontSize="17"
+                        FontAttributes="Bold"
+                        TextColor="#A12727" />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+        </Grid>
+
+        <!-- FILTRO -->
+        <Grid
+            Grid.Row="2"
+            Margin="12,2,12,8"
+            ColumnDefinitions="Auto,*,Auto"
+            ColumnSpacing="8">
+
+            <Label
+                Text="Exibir"
+                FontSize="12"
+                FontAttributes="Bold"
+                VerticalOptions="Center"
+                TextColor="#55616A" />
+
+            <Picker
+                Grid.Column="1"
+                ItemsSource="{Binding FiltrosStatus}"
+                SelectedItem="{Binding FiltroSelecionado}"
+                BackgroundColor="White"
+                TextColor="#20252A" />
+
+            <Label
+                Grid.Column="2"
+                Text="{Binding MensagemStatus}"
+                FontSize="11"
+                TextColor="#68747D"
+                VerticalOptions="Center" />
+
+        </Grid>
+
+        <!-- PARCELAS -->
+        <CollectionView
+            Grid.Row="3"
+            Margin="10,0,10,10"
+            ItemsSource="{Binding Contas}"
+            SelectionMode="None">
+
+            <CollectionView.EmptyView>
+
+                <Label
+                    Text="{Binding MensagemStatus}"
+                    Padding="30"
+                    FontSize="15"
+                    HorizontalTextAlignment="Center"
+                    TextColor="#66717A" />
+
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+
+                <DataTemplate x:DataType="models:ContaReceber">
+
+                    <Border
+                        Margin="2,5"
+                        Padding="14"
+                        BackgroundColor="White"
+                        Stroke="#DDE2E6">
+
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="14" />
+                        </Border.StrokeShape>
+
+                        <Grid
+                            RowDefinitions="Auto,Auto,Auto,Auto"
+                            ColumnDefinitions="*,Auto"
+                            RowSpacing="7">
+
+                            <HorizontalStackLayout
+                                Grid.Row="0"
+                                Spacing="7">
+
+                                <Label
+                                    Text="{Binding VendaID,
+                                        StringFormat='Venda Nº {0}'}"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="#20252A" />
+
+                                <Label
+                                    Text="{Binding NumeroParcela,
+                                        StringFormat='• Parcela {0}'}"
+                                    FontSize="13"
+                                    TextColor="#55616A" />
+
+                            </HorizontalStackLayout>
+
+                            <Border
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Padding="9,4"
+                                BackgroundColor="{Binding CorFundoStatus}"
+                                StrokeThickness="0">
+
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10" />
+                                </Border.StrokeShape>
+
+                                <Label
+                                    Text="{Binding StatusExibicao}"
+                                    FontSize="10"
+                                    FontAttributes="Bold"
+                                    TextColor="{Binding CorStatus}" />
+
+                            </Border>
+
+                            <Grid
+                                Grid.Row="1"
+                                Grid.ColumnSpan="2"
+                                ColumnDefinitions="*,*">
+
+                                <VerticalStackLayout Spacing="2">
+
+                                    <Label
+                                        Text="Vencimento"
+                                        FontSize="10"
+                                        TextColor="#7A848C" />
+
+                                    <Label
+                                        Text="{Binding DataVencimento,
+                                            StringFormat='{0:dd/MM/yyyy}'}"
+                                        FontSize="14"
+                                        FontAttributes="Bold"
+                                        TextColor="#20252A" />
+
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout
+                                    Grid.Column="1"
+                                    Spacing="2"
+                                    HorizontalOptions="End">
+
+                                    <Label
+                                        Text="Forma de pagamento"
+                                        FontSize="10"
+                                        TextColor="#7A848C"
+                                        HorizontalTextAlignment="End" />
+
+                                    <Label
+                                        Text="{Binding NomeFormaPagamento}"
+                                        FontSize="13"
+                                        TextColor="#20252A"
+                                        HorizontalTextAlignment="End" />
+
+                                </VerticalStackLayout>
+
+                            </Grid>
+
+                            <Grid
+                                Grid.Row="2"
+                                Grid.ColumnSpan="2"
+                                ColumnDefinitions="*,*,*"
+                                ColumnSpacing="8">
+
+                                <VerticalStackLayout Spacing="2">
+
+                                    <Label
+                                        Text="Parcela"
+                                        FontSize="10"
+                                        TextColor="#7A848C" />
+
+                                    <Label
+                                        Text="{Binding ValorParcela,
+                                            StringFormat='R$ {0:N2}'}"
+                                        FontSize="13"
+                                        FontAttributes="Bold" />
+
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout
+                                    Grid.Column="1"
+                                    Spacing="2">
+
+                                    <Label
+                                        Text="Recebido"
+                                        FontSize="10"
+                                        TextColor="#7A848C" />
+
+                                    <Label
+                                        Text="{Binding ValorRecebido,
+                                            StringFormat='R$ {0:N2}'}"
+                                        FontSize="13"
+                                        FontAttributes="Bold"
+                                        TextColor="#16734A" />
+
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout
+                                    Grid.Column="2"
+                                    Spacing="2"
+                                    HorizontalOptions="End">
+
+                                    <Label
+                                        Text="Saldo"
+                                        FontSize="10"
+                                        TextColor="#7A848C"
+                                        HorizontalTextAlignment="End" />
+
+                                    <Label
+                                        Text="{Binding Saldo,
+                                            StringFormat='R$ {0:N2}'}"
+                                        FontSize="16"
+                                        FontAttributes="Bold"
+                                        TextColor="{Binding CorStatus}"
+                                        HorizontalTextAlignment="End" />
+
+                                </VerticalStackLayout>
+
+                            </Grid>
+
+                            <Label
+                                Grid.Row="3"
+                                Grid.ColumnSpan="2"
+                                Text="{Binding ObservacaoParcela}"
+                                FontSize="11"
+                                TextColor="#68747D"
+                                LineBreakMode="TailTruncation"
+                                MaxLines="2" />
+
+                        </Grid>
+
+                    </Border>
+
+                </DataTemplate>
+
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>

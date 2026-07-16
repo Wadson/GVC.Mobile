@@ -50,10 +50,21 @@ public sealed class ProdutoRepository : IProdutoRepository
         }
     }
 
-    public async Task<int> ContarAsync()
+    public async Task<int> ContarAsync(
+       int? empresaId = null)
     {
         var database =
             await _databaseService.ObterConexaoAsync();
+
+        if (empresaId.HasValue)
+        {
+            return await database
+                .Table<Produto>()
+                .Where(produto =>
+                    produto.EmpresaID ==
+                    empresaId.Value)
+                .CountAsync();
+        }
 
         return await database
             .Table<Produto>()
@@ -61,9 +72,17 @@ public sealed class ProdutoRepository : IProdutoRepository
     }
 
     public async Task<IReadOnlyList<Produto>> PesquisarAsync(
-     string? termo,
-     int limite = 200)
+    string? termo,
+    int empresaId,
+    int limite = 200)
     {
+        if (empresaId <= 0)
+        {
+            throw new ArgumentException(
+                "O código da empresa deve ser maior que zero.",
+                nameof(empresaId));
+        }
+
         var database =
             await _databaseService.ObterConexaoAsync();
 
@@ -75,11 +94,15 @@ public sealed class ProdutoRepository : IProdutoRepository
         var termoNormalizado =
             termo?.Trim() ?? string.Empty;
 
-        if (string.IsNullOrWhiteSpace(termoNormalizado))
+        if (string.IsNullOrWhiteSpace(
+                termoNormalizado))
         {
             return await database
                 .Table<Produto>()
-                .OrderBy(produto => produto.NomeProduto)
+                .Where(produto =>
+                    produto.EmpresaID == empresaId)
+                .OrderBy(produto =>
+                    produto.NomeProduto)
                 .Take(limite)
                 .ToListAsync();
         }
@@ -95,11 +118,14 @@ public sealed class ProdutoRepository : IProdutoRepository
                 """
             SELECT *
             FROM Produtos
-            WHERE ProdutoID = ?
-               OR NomeProduto LIKE ?
-               OR Referencia LIKE ?
-               OR GtinEan LIKE ?
-               OR Marca LIKE ?
+            WHERE EmpresaID = ?
+              AND (
+                   ProdutoID = ?
+                OR NomeProduto LIKE ?
+                OR Referencia LIKE ?
+                OR GtinEan LIKE ?
+                OR Marca LIKE ?
+              )
             ORDER BY
                 CASE
                     WHEN ProdutoID = ? THEN 0
@@ -108,6 +134,7 @@ public sealed class ProdutoRepository : IProdutoRepository
                 NomeProduto
             LIMIT ?;
             """,
+                empresaId,
                 produtoId,
                 padrao,
                 padrao,
@@ -121,13 +148,17 @@ public sealed class ProdutoRepository : IProdutoRepository
             """
         SELECT *
         FROM Produtos
-        WHERE NomeProduto LIKE ?
-           OR Referencia LIKE ?
-           OR GtinEan LIKE ?
-           OR Marca LIKE ?
+        WHERE EmpresaID = ?
+          AND (
+               NomeProduto LIKE ?
+            OR Referencia LIKE ?
+            OR GtinEan LIKE ?
+            OR Marca LIKE ?
+          )
         ORDER BY NomeProduto
         LIMIT ?;
         """,
+            empresaId,
             padrao,
             padrao,
             padrao,

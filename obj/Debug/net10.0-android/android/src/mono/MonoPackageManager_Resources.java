@@ -28,6 +28,7 @@ public class MonoPackageManager_Resources {
 		"Microsoft.Maui.dll",
 		"Microsoft.Maui.Essentials.dll",
 		"Microsoft.Maui.Graphics.dll",
+		"SkiaSharp.dll",
 		"SQLite-net.dll",
 		"SQLitePCLRaw.core.dll",
 		"SQLitePCLRaw.provider.e_sqlite3.dll",

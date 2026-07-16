@@ -1,0 +1,8 @@
+<api type="release" assembly-name="GVC.Mobile" mvid="25176f477d434dbbb0b090ab9daced0a">
+  <module assembly-name="GVC.Mobile" mvid="25176f477d434dbbb0b090ab9daced0a" mvid-bytes="R28XJUN9u02wsJCrnaztCg==">
+    <types-scratch>
+      <entry key="crc6471ff18b13e89a79e/MainActivity" java-name="crc6471ff18b13e89a79e/MainActivity" managed-type-name="GVC.Mobile.MainActivity" token="33554454" />
+      <entry key="crc6471ff18b13e89a79e/MainApplication" java-name="crc6471ff18b13e89a79e/MainApplication" managed-type-name="GVC.Mobile.MainApplication" token="33554455" />
+    </types-scratch>
+  </module>
+</api>

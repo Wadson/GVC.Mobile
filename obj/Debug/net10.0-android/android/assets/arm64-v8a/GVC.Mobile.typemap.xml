@@ -1,10 +1,10 @@
-<api type="debug" assembly-name="GVC.Mobile" mvid="3084357ebb474ea88c0e4e2f53b191e6">
+<api type="debug" assembly-name="GVC.Mobile" mvid="9e7acf27f7fa4af6a02e33e2f9e163f3">
   <java-to-managed>
-    <entry java-name="crc6471ff18b13e89a79e/MainActivity" managed-name="GVC.Mobile.MainActivity, GVC.Mobile" managed-type-token-id="33554454" />
-    <entry java-name="crc6471ff18b13e89a79e/MainApplication" managed-name="GVC.Mobile.MainApplication, GVC.Mobile" managed-type-token-id="33554455" />
+    <entry java-name="crc6471ff18b13e89a79e/MainActivity" managed-name="GVC.Mobile.MainActivity, GVC.Mobile" managed-type-token-id="33554455" />
+    <entry java-name="crc6471ff18b13e89a79e/MainApplication" managed-name="GVC.Mobile.MainApplication, GVC.Mobile" managed-type-token-id="33554456" />
   </java-to-managed>
   <managed-to-java>
-    <entry java-name="crc6471ff18b13e89a79e/MainActivity" managed-name="GVC.Mobile.MainActivity, GVC.Mobile" managed-type-token-id="33554454" />
-    <entry java-name="crc6471ff18b13e89a79e/MainApplication" managed-name="GVC.Mobile.MainApplication, GVC.Mobile" managed-type-token-id="33554455" />
+    <entry java-name="crc6471ff18b13e89a79e/MainActivity" managed-name="GVC.Mobile.MainActivity, GVC.Mobile" managed-type-token-id="33554455" />
+    <entry java-name="crc6471ff18b13e89a79e/MainApplication" managed-name="GVC.Mobile.MainApplication, GVC.Mobile" managed-type-token-id="33554456" />
   </managed-to-java>
 </api>

@@ -84,11 +84,31 @@ build_metadata.AdditionalFiles.NoWarn =
 build_metadata.AdditionalFiles.EnableDiagnostics = 
 build_metadata.AdditionalFiles.LineInfo = 
 
+[D:/Projetos/GVC.Mobile/Views/ClientesContasPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GVC.Mobile.Views.ClientesContasPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\ClientesContasPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\ClientesContasPage.xaml
+build_metadata.AdditionalFiles.Inflator = SourceGen
+build_metadata.AdditionalFiles.NoWarn = 
+build_metadata.AdditionalFiles.EnableDiagnostics = 
+build_metadata.AdditionalFiles.LineInfo = 
+
 [D:/Projetos/GVC.Mobile/Views/ConfiguracoesPage.xaml]
 build_metadata.AdditionalFiles.GenKind = Xaml
 build_metadata.AdditionalFiles.ManifestResourceName = GVC.Mobile.Views.ConfiguracoesPage.xaml
 build_metadata.AdditionalFiles.TargetPath = Views\ConfiguracoesPage.xaml
 build_metadata.AdditionalFiles.RelativePath = Views\ConfiguracoesPage.xaml
+build_metadata.AdditionalFiles.Inflator = SourceGen
+build_metadata.AdditionalFiles.NoWarn = 
+build_metadata.AdditionalFiles.EnableDiagnostics = 
+build_metadata.AdditionalFiles.LineInfo = 
+
+[D:/Projetos/GVC.Mobile/Views/ContasClientePage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = GVC.Mobile.Views.ContasClientePage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views\ContasClientePage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views\ContasClientePage.xaml
 build_metadata.AdditionalFiles.Inflator = SourceGen
 build_metadata.AdditionalFiles.NoWarn = 
 build_metadata.AdditionalFiles.EnableDiagnostics = 

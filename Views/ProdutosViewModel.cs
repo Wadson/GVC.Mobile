@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using GVC.Mobile.Models;
 using GVC.Mobile.Repositories.Interfaces;
 using GVC.Mobile.Services.Interfaces;
-using System.Collections.ObjectModel;
 
 namespace GVC.Mobile.ViewModels;
 
@@ -12,7 +11,8 @@ public partial class ProdutosViewModel : ObservableObject
     private readonly IProdutoRepository _produtoRepository;
     private CancellationTokenSource? _pesquisaCancellation;
     private readonly IAppSettingsService  _settingsService;
-    public ObservableCollection<Produto> Produtos { get; } = [];
+    [ObservableProperty]
+    private IReadOnlyList<Produto> _produtos = [];
 
     [ObservableProperty]
     private string _termoPesquisa = string.Empty;
@@ -127,12 +127,9 @@ public partial class ProdutosViewModel : ObservableObject
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            Produtos.Clear();
-
-            foreach (var produto in produtos)
-            {
-                Produtos.Add(produto);
-            }
+            // Publica a lista inteira de uma vez. Isso evita centenas de eventos
+            // CollectionChanged e recriações de layout na abertura da tela.
+            Produtos = produtos;
 
             PossuiProdutos =
                 Produtos.Count > 0;

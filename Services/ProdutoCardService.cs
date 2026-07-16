@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using GVC.Mobile.Models;
+using GVC.Mobile.Repositories.Interfaces;
 using GVC.Mobile.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using SkiaSharp;
@@ -14,19 +15,28 @@ public sealed class ProdutoCardService : IProdutoCardService
     private readonly record struct TextoStyle(SKFont Font, SKPaint Paint);
 
     private readonly ILogger<ProdutoCardService> _logger;
+    private readonly IEmpresaRepository _empresaRepository;
 
-    public ProdutoCardService(ILogger<ProdutoCardService> logger)
+    public ProdutoCardService(
+        ILogger<ProdutoCardService> logger,
+        IEmpresaRepository empresaRepository)
     {
         _logger = logger;
+        _empresaRepository = empresaRepository;
     }
 
-    public Task<string> GerarCardAsync(Produto produto, CancellationToken cancellationToken = default)
+    public async Task<string> GerarCardAsync(Produto produto, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(produto);
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
+            var empresa = await _empresaRepository.ObterPorIdAsync(
+                produto.EmpresaID);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
             string nomeArquivo = $"GVC_PRODUTO_{produto.ProdutoID}_{DateTime.Now:yyyyMMdd_HHmmss}.png";
             string caminhoArquivo = Path.Combine(FileSystem.CacheDirectory, nomeArquivo);
 
@@ -35,7 +45,7 @@ public sealed class ProdutoCardService : IProdutoCardService
             using var canvas = new SKCanvas(bitmap);
 
             DesenharFundo(canvas);
-            DesenharCabecalho(canvas);
+            DesenharCabecalho(canvas, empresa);
             DesenharImagemProduto(canvas, produto);
             DesenharDadosProduto(canvas, produto);
             DesenharRodape(canvas);
@@ -45,7 +55,7 @@ public sealed class ProdutoCardService : IProdutoCardService
             using var file = File.Create(caminhoArquivo);
             data.SaveTo(file);
 
-            return Task.FromResult(caminhoArquivo);
+            return caminhoArquivo;
         }
         catch (Exception ex)
         {
@@ -69,23 +79,88 @@ public sealed class ProdutoCardService : IProdutoCardService
             paint);
     }
 
-    private static void DesenharCabecalho(SKCanvas canvas)
+    private static void DesenharCabecalho(SKCanvas canvas, Empresa? empresa)
     {
         using var fundo = new SKPaint
         {
             IsAntialias = true,
-            Color = SKColor.Parse("#173B57")
+            Color = SKColors.White
         };
 
         canvas.DrawRoundRect(
             new SKRoundRect(new SKRect(55, 50, LarguraCard - 55, 220), 36, 36),
             fundo);
 
-        var titulo = CriarTexto(54, SKColors.White, bold: true);
-        canvas.DrawText("GVC Mobile", 105, 130, SKTextAlign.Left, titulo.Font, titulo.Paint);
+        var xTexto = 105f;
 
-        var subtitulo = CriarTexto(27, SKColor.Parse("#D9E6EF"));
-        canvas.DrawText("Consulta de preços e estoque", 105, 180, SKTextAlign.Left, subtitulo.Font, subtitulo.Paint);
+        if (empresa?.Logo is { Length: > 0 })
+        {
+            try
+            {
+                using var logo = SKBitmap.Decode(empresa.Logo);
+
+                if (logo is not null)
+                {
+                    var areaLogo = new SKRect(85, 70, 215, 200);
+                    var destinoLogo = CalcularAreaAspectFit(
+                        logo.Width,
+                        logo.Height,
+                        areaLogo,
+                        4);
+
+                    canvas.DrawBitmap(logo, destinoLogo);
+                    xTexto = 240;
+                }
+            }
+            catch
+            {
+                // Um logo inválido não impede a geração do card.
+            }
+        }
+
+        var nomeEmpresa = empresa?.NomeExibicao ?? "GVC Mobile";
+        var titulo = CriarTexto(48, SKColor.Parse("#173B57"), bold: true);
+        DesenharTextoAjustadoUmaLinha(
+            canvas,
+            nomeEmpresa,
+            titulo,
+            xTexto,
+            130,
+            LarguraCard - xTexto - 85);
+
+        var subtitulo = CriarTexto(27, SKColor.Parse("#68747D"));
+        canvas.DrawText("Consulta de preços e estoque", xTexto, 180, SKTextAlign.Left, subtitulo.Font, subtitulo.Paint);
+    }
+
+    private static void DesenharTextoAjustadoUmaLinha(
+        SKCanvas canvas,
+        string texto,
+        TextoStyle estilo,
+        float x,
+        float y,
+        float larguraMaxima)
+    {
+        var original = texto.Trim();
+        var textoFinal = original;
+
+        while (textoFinal.Length > 1 &&
+               estilo.Font.MeasureText(textoFinal + "…") > larguraMaxima)
+        {
+            textoFinal = textoFinal[..^1].TrimEnd();
+        }
+
+        if (!string.Equals(textoFinal, original, StringComparison.Ordinal))
+        {
+            textoFinal += "…";
+        }
+
+        canvas.DrawText(
+            textoFinal,
+            x,
+            y,
+            SKTextAlign.Left,
+            estilo.Font,
+            estilo.Paint);
     }
 
     private static void DesenharImagemProduto(SKCanvas canvas, Produto produto)

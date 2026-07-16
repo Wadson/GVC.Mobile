@@ -109,6 +109,12 @@
         <member name="P:GVC.Mobile.ViewModels.HomeViewModel.QuantidadeImagens">
             <inheritdoc cref="F:GVC.Mobile.ViewModels.HomeViewModel._quantidadeImagens"/>
         </member>
+        <member name="P:GVC.Mobile.ViewModels.HomeViewModel.NomeEmpresaSelecionada">
+            <inheritdoc cref="F:GVC.Mobile.ViewModels.HomeViewModel._nomeEmpresaSelecionada"/>
+        </member>
+        <member name="P:GVC.Mobile.ViewModels.HomeViewModel.LogoEmpresaSelecionada">
+            <inheritdoc cref="F:GVC.Mobile.ViewModels.HomeViewModel._logoEmpresaSelecionada"/>
+        </member>
         <member name="M:GVC.Mobile.ViewModels.HomeViewModel.OnEstaSincronizandoChanged(System.Boolean)">
             <summary>Executes the logic for when <see cref="P:GVC.Mobile.ViewModels.HomeViewModel.EstaSincronizando"/> just changed.</summary>
             <param name="value">The new property value that was set.</param>
@@ -139,6 +145,9 @@
             <inheritdoc/>
             <inheritdoc/>
             <inheritdoc/>
+        </member>
+        <member name="P:GVC.Mobile.ViewModels.ProdutosViewModel.Produtos">
+            <inheritdoc cref="F:GVC.Mobile.ViewModels.ProdutosViewModel._produtos"/>
         </member>
         <member name="P:GVC.Mobile.ViewModels.ProdutosViewModel.TermoPesquisa">
             <inheritdoc cref="F:GVC.Mobile.ViewModels.ProdutosViewModel._termoPesquisa"/>
@@ -373,11 +382,20 @@
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.QuantidadeImagens">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "QuantidadeImagens" generated properties.</summary>
         </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.NomeEmpresaSelecionada">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "NomeEmpresaSelecionada" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.LogoEmpresaSelecionada">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "LogoEmpresaSelecionada" generated properties.</summary>
+        </member>
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Produto">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Produto" generated properties.</summary>
         </member>
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.MostrarPrecosInternos">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "MostrarPrecosInternos" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Produtos">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Produtos" generated properties.</summary>
         </member>
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.PossuiProdutos">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "PossuiProdutos" generated properties.</summary>
@@ -460,11 +478,20 @@
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.QuantidadeImagens">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "QuantidadeImagens" generated properties.</summary>
         </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.NomeEmpresaSelecionada">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "NomeEmpresaSelecionada" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.LogoEmpresaSelecionada">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "LogoEmpresaSelecionada" generated properties.</summary>
+        </member>
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Produto">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Produto" generated properties.</summary>
         </member>
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.MostrarPrecosInternos">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "MostrarPrecosInternos" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Produtos">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Produtos" generated properties.</summary>
         </member>
         <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.PossuiProdutos">
             <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "PossuiProdutos" generated properties.</summary>

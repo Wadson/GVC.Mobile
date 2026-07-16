@@ -220,6 +220,22 @@ public sealed class SincronizacaoService : ISincronizacaoService
                     pastaExtracao,
                     cancellationToken);
 
+                        var quantidadeImagensCopiadas =  Directory.Exists(pastaImagensNova)
+                    ? Directory
+                        .EnumerateFiles(
+                            pastaImagensNova,
+                            "*",
+                            SearchOption.TopDirectoryOnly)
+                        .Count()
+                    : 0;
+
+            if (manifest.QuantidadeImagens > 0 &&
+                quantidadeImagensCopiadas == 0)
+            {
+                throw new InvalidDataException(
+                    "O pacote informa imagens, mas nenhuma imagem foi copiada para o armazenamento local.");
+            }
+
             var empresas =
                 ConverterEmpresas(
                     empresasDto);
@@ -230,6 +246,23 @@ public sealed class SincronizacaoService : ISincronizacaoService
                  ConverterProdutos(
                      produtosDto,
                 pastaImagensNova);
+
+            var quantidadeProdutosComImagem = produtos.Count(
+                produto => !string.IsNullOrWhiteSpace(produto.ImagemLocal));
+
+            _logger.LogInformation(
+                "Imagens preparadas: {ArquivosCopiados}. Produtos vinculados a imagens: {ProdutosComImagem} de {TotalProdutos}.",
+                quantidadeImagensCopiadas,
+                quantidadeProdutosComImagem,
+                produtos.Count);
+
+            if (manifest.QuantidadeImagens > 0 &&
+                quantidadeProdutosComImagem == 0)
+            {
+                throw new InvalidDataException(
+                    "As imagens foram extraídas, mas nenhum produto foi vinculado a elas. " +
+                    "Verifique o campo ImagemLocal de produtos.json e os nomes dos arquivos do pacote.");
+            }
 
             var clientes =
                 ConverterClientes(
@@ -274,6 +307,19 @@ public sealed class SincronizacaoService : ISincronizacaoService
                 contasReceber);
 
             progresso?.Report(0.94);
+
+            // Os produtos já apontam para AppDataDirectory/imagens. Somente agora,
+            // após toda a persistência terminar, troca a pasta temporária pela ativa.
+            await AtivarNovaPastaDeImagensAsync(
+                pastaImagensNova);
+
+            // A pasta foi movida e não deve mais ser tratada como temporária.
+            pastaImagensNova = null;
+
+            await SalvarConfiguracoesAsync(
+                manifest);
+
+            progresso?.Report(1.0);
 
             return new SincronizacaoResult
             {
@@ -424,9 +470,7 @@ public sealed class SincronizacaoService : ISincronizacaoService
         }
     }
 
-    private static string LocalizarArquivoObrigatorio(
-    string pastaExtracao,
-    string nomeArquivo)
+    private static string LocalizarArquivoObrigatorio( string pastaExtracao,  string nomeArquivo)
     {
         if (string.IsNullOrWhiteSpace(pastaExtracao))
         {
@@ -534,49 +578,47 @@ public sealed class SincronizacaoService : ISincronizacaoService
         }
     }
 
-    private static async Task<string> PrepararImagensAsync(string pastaExtracao,  CancellationToken cancellationToken)
+    private static async Task<string> PrepararImagensAsync( string pastaExtracao, CancellationToken cancellationToken)
     {
-        var pastaOrigem = Path.Combine(
-            pastaExtracao,
-            "imagens");
+        var pastaOrigem = LocalizarPastaImagens( pastaExtracao);
 
         var pastaNova = Path.Combine(
             FileSystem.AppDataDirectory,
             $"imagens_novas_{Guid.NewGuid():N}");
 
-        Directory.CreateDirectory(pastaNova);
+        Directory.CreateDirectory(
+            pastaNova);
 
-        if (!Directory.Exists(pastaOrigem))
+        if (pastaOrigem is null)
+        {
             return pastaNova;
+        }
 
         foreach (var arquivo in Directory.EnumerateFiles(
                      pastaOrigem,
                      "*",
-                     SearchOption.AllDirectories))
+                     SearchOption.TopDirectoryOnly))
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            cancellationToken
+                .ThrowIfCancellationRequested();
 
-            var caminhoRelativo =
-                Path.GetRelativePath(
-                    pastaOrigem,
+            var nomeArquivo =
+                Path.GetFileName(
                     arquivo);
 
-            var destino = Path.Combine(
-                pastaNova,
-                caminhoRelativo);
-
-            var diretorioDestino =
-                Path.GetDirectoryName(destino);
-
-            if (!string.IsNullOrWhiteSpace(
-                    diretorioDestino))
-            {
-                Directory.CreateDirectory(
-                    diretorioDestino);
-            }
+            var destino =
+                Path.Combine(
+                    pastaNova,
+                    nomeArquivo);
 
             await using var origem =
-                File.OpenRead(arquivo);
+                new FileStream(
+                    arquivo,
+                    FileMode.Open,
+                    FileAccess.Read,
+                    FileShare.Read,
+                    bufferSize: 64 * 1024,
+                    useAsync: true);
 
             await using var destinoStream =
                 new FileStream(
@@ -639,9 +681,13 @@ public sealed class SincronizacaoService : ISincronizacaoService
 
     private static List<Produto> ConverterProdutos( IReadOnlyCollection<ProdutoSyncDto> produtosDto, string pastaImagensNova)
     {
-        var produtos =
-            new List<Produto>(
-                produtosDto.Count);
+        var produtos = new List<Produto>(produtosDto.Count);
+
+        // Cria o índice uma única vez.
+        // A comparação ignora maiúsculas e minúsculas.
+        var imagensPorNome =
+            CriarIndiceDeImagens(
+                pastaImagensNova);
 
         foreach (var dto in produtosDto)
         {
@@ -651,47 +697,62 @@ public sealed class SincronizacaoService : ISincronizacaoService
                     dto.ImagemLocal))
             {
                 var nomeArquivo =
-                    Path.GetFileName(
+                    ExtrairNomeArquivoMultiplataforma(
                         dto.ImagemLocal);
 
-                var caminhoTemporario =
-                    Path.Combine(
-                        pastaImagensNova,
-                        nomeArquivo);
-
-                if (File.Exists(caminhoTemporario))
+                if (!string.IsNullOrWhiteSpace(nomeArquivo) &&
+                    imagensPorNome.TryGetValue(
+                        nomeArquivo,
+                        out var caminhoTemporario))
                 {
+                    var nomeArquivoReal =
+                        Path.GetFileName(
+                            caminhoTemporario);
+
                     caminhoImagemLocal =
                         Path.Combine(
                             FileSystem.AppDataDirectory,
                             "imagens",
-                            nomeArquivo);
+                            nomeArquivoReal);
                 }
             }
 
             produtos.Add(new Produto
             {
-                ProdutoID = dto.ProdutoID,
+                ProdutoID =
+                    dto.ProdutoID,
+
                 NomeProduto =
-                    dto.NomeProduto.Trim(),
+                    dto.NomeProduto?.Trim()
+                    ?? string.Empty,
+
                 Referencia =
                     dto.Referencia?.Trim(),
+
                 PrecoCompra =
                     dto.PrecoCompra,
+
                 PrecoCusto =
                     dto.PrecoCusto,
+
                 PrecoDeVenda =
                     dto.PrecoDeVenda,
+
                 Estoque =
                     dto.Estoque,
+
                 GtinEan =
                     dto.GtinEan?.Trim(),
+
                 MarcaID =
                     dto.MarcaID,
+
                 Marca =
                     dto.Marca?.Trim(),
+
                 EmpresaID =
                     dto.EmpresaID,
+
                 ImagemLocal =
                     caminhoImagemLocal
             });
@@ -699,7 +760,40 @@ public sealed class SincronizacaoService : ISincronizacaoService
 
         return produtos;
     }
+    private static string? LocalizarImagemNaPasta( string pastaImagens, string nomeArquivo)
+    {
+        if (string.IsNullOrWhiteSpace(
+                pastaImagens) ||
+            string.IsNullOrWhiteSpace(
+                nomeArquivo) ||
+            !Directory.Exists(
+                pastaImagens))
+        {
+            return null;
+        }
 
+        var caminhoDireto =
+            Path.Combine(
+                pastaImagens,
+                nomeArquivo);
+
+        if (File.Exists(caminhoDireto))
+        {
+            return caminhoDireto;
+        }
+
+        return Directory
+            .EnumerateFiles(
+                pastaImagens,
+                "*",
+                SearchOption.TopDirectoryOnly)
+            .FirstOrDefault(
+                arquivo =>
+                    string.Equals(
+                        Path.GetFileName(arquivo),
+                        nomeArquivo,
+                        StringComparison.OrdinalIgnoreCase));
+    }
     private async Task SalvarConfiguracoesAsync( SyncManifestDto manifest)
     {
         var database =
@@ -762,11 +856,50 @@ public sealed class SincronizacaoService : ISincronizacaoService
                 configuracao);
         }
     }
-
-    private static void AtivarNovaPastaDeImagens(
-        string pastaNova)
+    private static Dictionary<string, string> CriarIndiceDeImagens( string pastaImagens)
     {
-        var pastaAtual = Path.Combine(
+        var indice = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        if (string.IsNullOrWhiteSpace(
+                pastaImagens) ||
+            !Directory.Exists(
+                pastaImagens))
+        {
+            return indice;
+        }
+
+        foreach (var arquivo in Directory.EnumerateFiles(
+                     pastaImagens,
+                     "*",
+                     SearchOption.AllDirectories))
+        {
+            var nomeArquivo =
+                Path.GetFileName(arquivo);
+
+            if (string.IsNullOrWhiteSpace(
+                    nomeArquivo))
+            {
+                continue;
+            }
+
+            // Mantém o primeiro arquivo encontrado.
+            indice.TryAdd(
+                nomeArquivo,
+                arquivo);
+        }
+
+        return indice;
+    }
+    private Task AtivarNovaPastaDeImagensAsync(string pastaNova)
+    {
+        if (string.IsNullOrWhiteSpace(pastaNova) ||
+            !Directory.Exists(pastaNova))
+        {
+            throw new DirectoryNotFoundException(
+                "A pasta temporária de imagens não foi encontrada.");
+        }
+
+        var pastaImagensAtiva = Path.Combine(
             FileSystem.AppDataDirectory,
             "imagens");
 
@@ -777,22 +910,69 @@ public sealed class SincronizacaoService : ISincronizacaoService
         ExcluirDiretorioSilenciosamente(
             pastaBackup);
 
-        if (Directory.Exists(pastaAtual))
+        if (Directory.Exists(pastaImagensAtiva))
         {
             Directory.Move(
-                pastaAtual,
+                pastaImagensAtiva,
                 pastaBackup);
         }
 
-        Directory.Move(
-            pastaNova,
-            pastaAtual);
+        try
+        {
+            Directory.Move(
+                pastaNova,
+                pastaImagensAtiva);
+        }
+        catch
+        {
+            // Se a ativação falhar, restaura a pasta anterior.
+            if (!Directory.Exists(pastaImagensAtiva) &&
+                Directory.Exists(pastaBackup))
+            {
+                Directory.Move(
+                    pastaBackup,
+                    pastaImagensAtiva);
+            }
+
+            throw;
+        }
 
         ExcluirDiretorioSilenciosamente(
             pastaBackup);
+
+        var quantidadeImagensAtivas = Directory
+            .EnumerateFiles(
+                pastaImagensAtiva,
+                "*",
+                SearchOption.AllDirectories)
+            .Count();
+
+        _logger.LogInformation(
+            "Pasta definitiva de imagens ativada. Caminho: {Caminho}. Arquivos: {Quantidade}.",
+            pastaImagensAtiva,
+            quantidadeImagensAtivas);
+
+        return Task.CompletedTask;
     }
-    private static List<Cliente> ConverterClientes(
-    IReadOnlyCollection<ClienteSyncDto> clientesDto)
+    private static string ExtrairNomeArquivoMultiplataforma( string? caminho)
+    {
+        if (string.IsNullOrWhiteSpace(caminho))
+            return string.Empty;
+
+        var caminhoNormalizado =
+            caminho
+                .Trim()
+                .Replace('\\', '/');
+
+        var ultimaBarra =
+            caminhoNormalizado.LastIndexOf('/');
+
+        return ultimaBarra >= 0
+            ? caminhoNormalizado[
+                (ultimaBarra + 1)..]
+            : caminhoNormalizado;
+    }
+    private static List<Cliente> ConverterClientes( IReadOnlyCollection<ClienteSyncDto> clientesDto)
     {
         var clientes =
             new List<Cliente>(clientesDto.Count);
@@ -877,8 +1057,7 @@ public sealed class SincronizacaoService : ISincronizacaoService
         }
     }
 
-    private static void ExcluirDiretorioSilenciosamente(
-        string? caminho)
+    private static void ExcluirDiretorioSilenciosamente( string? caminho)
     {
         try
         {
@@ -894,5 +1073,29 @@ public sealed class SincronizacaoService : ISincronizacaoService
         {
             // Limpeza auxiliar.
         }
+    }
+    private static string? LocalizarPastaImagens(
+    string pastaExtracao)
+    {
+        if (string.IsNullOrWhiteSpace(
+                pastaExtracao) ||
+            !Directory.Exists(
+                pastaExtracao))
+        {
+            return null;
+        }
+
+        return Directory
+            .EnumerateDirectories(
+                pastaExtracao,
+                "*",
+                SearchOption.AllDirectories)
+            .FirstOrDefault(
+                diretorio =>
+                    string.Equals(
+                        Path.GetFileName(
+                            diretorio),
+                        "imagens",
+                        StringComparison.OrdinalIgnoreCase));
     }
 }

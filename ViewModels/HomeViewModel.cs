@@ -14,6 +14,12 @@ public partial class HomeViewModel : ObservableObject
     private readonly IProdutoRepository
         _produtoRepository;
 
+    private readonly IEmpresaRepository
+        _empresaRepository;
+
+    private readonly IAppSettingsService
+        _settingsService;
+
     private readonly DatabaseService
         _databaseService;
 
@@ -47,9 +53,17 @@ public partial class HomeViewModel : ObservableObject
     [ObservableProperty]
     private int _quantidadeImagens;
 
+    [ObservableProperty]
+    private string _nomeEmpresaSelecionada = "GVC Mobile";
+
+    [ObservableProperty]
+    private ImageSource? _logoEmpresaSelecionada;
+
     public HomeViewModel(
         ISincronizacaoService sincronizacaoService,
         IProdutoRepository produtoRepository,
+        IEmpresaRepository empresaRepository,
+        IAppSettingsService settingsService,
         DatabaseService databaseService)
     {
         _sincronizacaoService =
@@ -57,6 +71,12 @@ public partial class HomeViewModel : ObservableObject
 
         _produtoRepository =
             produtoRepository;
+
+        _empresaRepository =
+            empresaRepository;
+
+        _settingsService =
+            settingsService;
 
         _databaseService =
             databaseService;
@@ -69,6 +89,24 @@ public partial class HomeViewModel : ObservableObject
     {
         try
         {
+            var settings = _settingsService.Obter();
+
+            var empresaSelecionada = settings.EmpresaID > 0
+                ? await _empresaRepository.ObterPorIdAsync(
+                    settings.EmpresaID)
+                : null;
+
+            NomeEmpresaSelecionada =
+                empresaSelecionada?.NomeExibicao
+                ?? "GVC Mobile";
+
+            var logo = empresaSelecionada?.Logo;
+
+            LogoEmpresaSelecionada = logo is { Length: > 0 }
+                ? ImageSource.FromStream(
+                    () => new MemoryStream(logo))
+                : null;
+
             QuantidadeProdutos =
                 await _produtoRepository.ContarAsync();
 

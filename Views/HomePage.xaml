@@ -17,7 +17,7 @@
 
             <Border
                 Padding="20"
-                BackgroundColor="#173B57"
+                BackgroundColor="White"
                 StrokeThickness="0">
 
                 <Border.StrokeShape>
@@ -25,20 +25,38 @@
                         CornerRadius="16" />
                 </Border.StrokeShape>
 
-                <VerticalStackLayout Spacing="5">
+                <Grid
+                    ColumnDefinitions="Auto,*"
+                    ColumnSpacing="14">
 
-                    <Label
-                        Text="GVC Mobile"
-                        FontSize="27"
-                        FontAttributes="Bold"
-                        TextColor="White" />
+                    <Image
+                        Source="{Binding LogoEmpresaSelecionada}"
+                        WidthRequest="64"
+                        HeightRequest="64"
+                        Aspect="AspectFit"
+                        VerticalOptions="Center" />
 
-                    <Label
-                        Text="Consulta de preços e estoque"
-                        FontSize="14"
-                        TextColor="#D9E6EF" />
+                    <VerticalStackLayout
+                        Grid.Column="1"
+                        Spacing="5"
+                        VerticalOptions="Center">
 
-                </VerticalStackLayout>
+                        <Label
+                            Text="{Binding NomeEmpresaSelecionada}"
+                            FontSize="27"
+                            FontAttributes="Bold"
+                            TextColor="#173B57"
+                            LineBreakMode="TailTruncation"
+                            MaxLines="2" />
+
+                        <Label
+                            Text="Consulta de preços e estoque"
+                            FontSize="14"
+                            TextColor="#173B57" />
+
+                    </VerticalStackLayout>
+
+                </Grid>
 
             </Border>
 
